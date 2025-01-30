@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: vue-frontend:latest
+    container_name: vue_frontend
+    ports:
+      - "8080:8080"  # Map host port 8080 to container port 80
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    image: node-backend:latest
+    container_name: node_backend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      - DB_USER=postgres
+      - DB_PASSWORD=sql
+      - DATABASE=male
+      - DB_HOST=db
+      - DB_PORT=5432
+      - SERVER_PORT=3000
+    networks:
+      - app-network
+
+  db:
+    image: postgres:17-alpine
+    container_name: male_db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=sql
+      - POSTGRES_DB=male
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db-init/:/docker-entrypoint-initdb.d/
+    ports:
+      - "5430:5432"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
