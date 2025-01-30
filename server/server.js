@@ -7,12 +7,16 @@ const {getAllTournaments, getTournamentById} = require("./service/tournamentsSer
 const {getMatchByTournamentId} = require("./service/matchesService");
 
 
-const port = parseInt(process.env.SERVER_PORT, 10) || 3000;
 const app = express();
+const USE_SSL = process.env.USE_SSL === 'true'
+const USE_CORS = process.env.USE_CORS === 'true'
 
-app.use(cors({
-  origins: ['http://localhost:8080', "http://frontend:8080"]
-}));
+if (USE_CORS) {
+  app.use(cors({
+    origins: ['http://localhost:8080', "http://frontend:8080"]
+  }));
+}
+
 app.use(express.json());
 
 app.get("/api/players", getAllPlayers)
@@ -28,6 +32,21 @@ app.get("/api/tournaments/:id", getTournamentById)
 
 app.get("/api/matches/:id", getMatchByTournamentId)
 
-app.listen(port, '0.0.0.0', () => {
-  console.log("Server is listening on port " + port)
-});
+if (USE_SSL) {
+  const fs = require('fs');
+  const https = require('https');
+
+  const sslOptions = {
+    key: fs.readFileSync(process.env.SSL_KEYFILE),
+    cert: fs.readFileSync(process.env.SSL_CERTFILE),
+  };
+
+  https.createServer(sslOptions, app).listen(443, () => {
+    console.log('HTTPS Server running on port 443');
+  });
+} else {
+  const port = parseInt(process.env.SERVER_PORT, 10) || 3000;
+  app.listen(port, '0.0.0.0', () => {
+    console.log("Server is listening on port " + port)
+  });
+}
