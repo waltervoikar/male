@@ -7,7 +7,4 @@ const pool = new Pool({
   port: process.env.DB_PORT || '5430',
 });
 
-console.log(process.env.DB_HOST)
-console.log(process.env.DB_PORT)
-
 module.exports = { pool };

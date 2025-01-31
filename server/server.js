@@ -8,14 +8,10 @@ const {getMatchByTournamentId} = require("./service/matchesService");
 
 
 const app = express();
-const USE_SSL = process.env.USE_SSL === 'true'
-const USE_CORS = process.env.USE_CORS === 'true'
 
-if (USE_CORS) {
-  app.use(cors({
-    origins: ['http://localhost:8080', "http://frontend:8080"]
-  }));
-}
+app.use(cors({
+  origins: ['http://localhost:8080', process.env.CLOUD_URL]
+}));
 
 app.use(express.json());
 
@@ -32,21 +28,19 @@ app.get("/api/tournaments/:id", getTournamentById)
 
 app.get("/api/matches/:id", getMatchByTournamentId)
 
-if (USE_SSL) {
+if (!process.env.CLOUD_URL) {
   const fs = require('fs');
   const https = require('https');
 
   const sslOptions = {
-    key: fs.readFileSync(process.env.SSL_KEYFILE),
-    cert: fs.readFileSync(process.env.SSL_CERTFILE),
+    key: fs.readFileSync(process.env.SSL_KEYFILE || '/etc/letsencrypt/live/hollak.duckdns.org/privkey.pem'),
+    cert: fs.readFileSync(process.env.SSL_CERTFILE || '/etc/letsencrypt/live/hollak.duckdns.org/fullchain.pem'),
   };
 
   https.createServer(sslOptions, app).listen(443, () => {
     console.log('HTTPS Server running on port 443');
   });
 } else {
-  const port = parseInt(process.env.SERVER_PORT, 10) || 3000;
-  app.listen(port, '0.0.0.0', () => {
-    console.log("Server is listening on port " + port)
+  app.listen(3000, () => {
   });
 }
