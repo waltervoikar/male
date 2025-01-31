@@ -7,7 +7,7 @@
     "dev": "vite",
     "server": "cd ../server && node server.js",
     "build_dev": "vite build --mode development",
-    "build": "vite build",
+    "build": "vite build && cp dist/index.html dist/404.html",
     "build_docker": "vite build --mode docker",
     "preview": "vite preview",
     "lint": "eslint . --fix",
