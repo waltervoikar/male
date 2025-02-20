@@ -1,58 +1,75 @@
 const { pool } = require("../database")
 
 const getAllPlayers = (req, res) => {
+  console.log("IN - Get all players request")
+
   let query = `
-  select i.id, i.eesnimi, i.perenimi, k.nimi as klubi, i.synniaeg, i.sugu, i.ranking from isikud i
-    left join klubid k on i.klubi = k.id
+  SELECT i.id, i.eesnimi, i.perenimi, k.nimi AS klubi, i.synniaeg, i.sugu, i.ranking FROM isikud i
+    LEFT JOIN klubid k ON i.klubis = k.id
   `
   pool.query(query, (err, results) => {
     if (err) {
+      console.log(err)
       return res.status(500).send({
-        msg: "Error querying clubs"
+        message: "Error while reading all players",
+        error: err
       })
     }
+
+    console.log("OUT - Get all players result: " + JSON.stringify(results.rows))
     res.status(200).send(results.rows)
   })
 }
 
 const getPlayerById = (req, res) => {
-  console.log(req.params.id)
   const id = parseInt(req.params.id)
+  console.log(`IN - Get player(id=${id}) request`)
+
   let query = `
-  select i.id, i.eesnimi, i.perenimi, k.nimi as klubi, i.synniaeg, i.sugu, i.ranking from isikud i
-    left join klubid k on i.klubi = k.id
-    where i.id = $1
+  SELECT i.id, i.eesnimi, i.perenimi, k.nimi AS klubi, i.synniaeg, i.sugu, i.ranking FROM isikud i
+    LEFT JOIN klubid k ON i.klubis = k.id
+    WHERE i.id = $1
   `
   pool.query(query, [id], (err, results) => {
     if (err) {
       console.error(err)
       return res.status(500).send({
-        msg: "Error querying clubs"
+        message: `Error while reading player(id=${id})`,
+        error: err
       })
     }
+
+    console.log(`OUT - Get player(id=${id}) result: ${JSON.stringify(results.rows[0])}`)
     res.status(200).send(results.rows[0])
   })
 }
 
 const getPlayersByClubId = (req, res) => {
   const id = parseInt(req.params.id)
+  console.log(`IN - Get players for club(id=${id})`)
+
   let query = `
-  select i.id, i.eesnimi, i.perenimi, k.nimi as klubi, i.synniaeg, i.sugu, i.ranking from isikud i
-    left join klubid k on i.klubi = k.id
-    where i.klubi = $1
+  SELECT i.id, i.eesnimi, i.perenimi, k.nimi AS klubi, i.synniaeg, i.sugu, i.ranking FROM isikud i
+    LEFT JOIN KLUBID k ON i.klubis = k.id
+    WHERE i.klubi = $1
   `
   pool.query(query, [id], (err, results) => {
     if (err) {
       return res.status(500).send({
-        msg: "Error querying clubs"
+        message: `Error while reading players for club(id=${id})`,
+        error: err
       })
     }
+
+    console.log(`OUT - Get players for club(id=${id}) result: ${JSON.stringify(results.rows)}`)
     res.status(200).send(results.rows)
   })
 }
 
 const getPlayerStatistics = (req, res) => {
   const id = parseInt(req.params.id)
+  console.log(`IN - Get player(id=${id}) statistics request`)
+
   let query = `
     SELECT
     COUNT(*) AS match_count,
@@ -96,9 +113,12 @@ const getPlayerStatistics = (req, res) => {
   pool.query(query, [id], (err, results) => {
     if (err) {
       return res.status(500).send({
-        msg: "Error querying player statistics"
+        message: `Error while reading player statistics for player(id=${id})`,
+        error: err
       })
     }
+
+    console.log(`OUT - Get player(id=${id}) statistics result: ${JSON.stringify(results.rows[0])}`)
     res.status(200).send(results.rows[0])
   })
 }

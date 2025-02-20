@@ -1,26 +1,30 @@
 const { pool } = require("../database")
 
 const getAllTournaments = (req, res) => {
+  console.log("IN - Get all tournaments request")
+
   let query = `
   SELECT * FROM turniirid t
   ORDER BY loppkuupaev DESC
   `
-  console.log("get all tournaments")
 
   pool.query(query, (err, results) => {
     if (err) {
       console.log(err)
       return res.status(500).send({
-        msg: "Error querying tournaments",
+        message: "Error while reading all tournaments",
         error: err
       })
     }
+    console.log("OUT - Get all tournaments result: " + JSON.stringify(results.rows))
     res.status(200).send(results.rows)
   })
 }
 
 const getTournamentById = (req, res) => {
   const id = parseInt(req.params.id)
+  console.log(`IN - Get tournament(id=${id}) request`)
+
   let query = `
   SELECT * FROM turniirid t
   WHERE t.id = $1
@@ -29,10 +33,11 @@ const getTournamentById = (req, res) => {
   pool.query(query, [id], (err, results) => {
     if (err) {
       return res.status(500).send({
-        msg: "Error querying tournaments",
+        message: `Error while reading tournament(id=${id})`,
         error: err
       })
     }
+    console.log(`OUT - Get tournament(id=${id}) result: ${JSON.stringify(results.rows)}`)
     res.status(200).send(results.rows[0])
   })
 }
