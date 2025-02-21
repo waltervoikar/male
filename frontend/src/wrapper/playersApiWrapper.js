@@ -1,4 +1,4 @@
-import formatDate from "@/utils/dateFormatter.js";
+import {formatDate} from "@/utils/dateFormatter.js";
 import apiClient from "@/wrapper/axiosClient.js";
 
 export async function fetchAllPlayers() {

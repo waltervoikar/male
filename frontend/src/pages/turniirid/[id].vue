@@ -6,45 +6,56 @@
         <h3 v-if="tournament">{{ tournament.location }}</h3>
       </v-col>
     </v-row>
+    <v-row class="mb-4">
+      <v-col>
+        <v-btn color="primary" @click="openAddMatchDialog">Lisa partii</v-btn>
+      </v-col>
+    </v-row>
     <v-row>
       <v-col>
-        <h2 class="mb-4">Turniiri Partiid</h2>
         <MatchesSearch :tournamentId="tournamentId" />
       </v-col>
     </v-row>
+    <AddMatchDialog
+      :tournamentId="tournamentId"
+      v-model:showDialog="showAddMatchDialog"
+    />
   </v-container>
 </template>
 
 <script>
 import MatchesSearch from "@/components/tournaments/MatchesSearch.vue";
-import {fetchTournamentById} from "@/wrapper/tournamentsApiWrapper.js";
+import AddMatchDialog from "@/components/tournaments/AddMatchDialog.vue";
+import { fetchTournamentById } from "@/wrapper/tournamentsApiWrapper.js";
 
 export default {
-  components: {MatchesSearch},
+  name: "Tournament",
+  components: { MatchesSearch, AddMatchDialog },
   data() {
     return {
       tournamentId: null,
       tournament: null,
-    }
+      showAddMatchDialog: false,
+    };
   },
-
   created() {
-    this.tournamentId = this.$route.params.id
+    this.tournamentId = this.$route.params.id;
     this.$watch(
       () => this.$route.params.id,
       this.fetchTournament,
-      {immediate: true}
-    )
+      { immediate: true }
+    );
   },
-
   methods: {
     async fetchTournament() {
-      this.tournament = await fetchTournamentById(this.tournamentId)
+      this.tournament = await fetchTournamentById(this.tournamentId);
     },
-  }
-}
+    openAddMatchDialog() {
+      this.showAddMatchDialog = true;
+    },
+  },
+};
 </script>
 
 <style scoped>
-
 </style>

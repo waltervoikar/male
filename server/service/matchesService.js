@@ -17,7 +17,12 @@ const getMatchByTournamentId = (req, res) => {
     must.id AS must_id,
     must.eesnimi AS must_eesnimi,
     must.perenimi AS must_perenimi,
-    must.klubi AS must_klubi
+    must.klubi AS must_klubi,
+    CASE
+      WHEN valge_tulemus = 2 THEN 'valge'
+      WHEN must_tulemus = 2 THEN 'must'
+      ELSE 'viik'
+    END AS voitja
 FROM
     partiid p
 LEFT JOIN (

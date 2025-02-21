@@ -1,5 +1,4 @@
 <template>
-  <v-container fluid class="mt-4">
     <v-data-table
       :headers="headers"
       :items="matches"
@@ -63,7 +62,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-container>
 </template>
 
 <script>
@@ -77,7 +75,7 @@ export default {
         {title: 'Must', value: 'black.fullName', sortable: true},
         {title: 'Algus', value: 'startTime', sortable: true},
         {title: 'Lõpp', value: 'endTime', sortable: true},
-        {title: 'Lõppenud', value: 'isEnded', sortable: true},
+        {title: 'Võitja', value: 'winner', sortable: true},
         {value: 'action', sortable: false},
       ],
       matches: [],
