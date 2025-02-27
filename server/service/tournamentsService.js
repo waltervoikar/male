@@ -4,7 +4,8 @@ const getAllTournaments = (req, res) => {
   console.log("IN - Get all tournaments request")
 
   let query = `
-  SELECT * FROM turniirid t
+  SELECT t.id, t.nimi, t.alguskuupaev, t.loppkuupaev, a.nimi AS toimumiskoht FROM turniirid t
+  LEFT JOIN asulad a ON t.asula = a.id
   ORDER BY loppkuupaev DESC
   `
 
@@ -26,7 +27,8 @@ const getTournamentById = (req, res) => {
   console.log(`IN - Get tournament(id=${id}) request`)
 
   let query = `
-  SELECT * FROM turniirid t
+  SELECT t.id, t.nimi, t.alguskuupaev, t.loppkuupaev, a.nimi AS toimumiskoht FROM turniirid t
+  LEFT JOIN asulad a ON t.asula = a.id
   WHERE t.id = $1
   `
 

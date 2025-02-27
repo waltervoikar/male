@@ -28,10 +28,10 @@ const getClubById = (req, res) => {
   console.log(`IN - Get club(id=${id}) request`)
 
   let query = `
-    SELECT k.nimi, a.nimi as asukoht, f_klubisuurus($1) as members, ROUND(AVG(i.ranking), 1) as average_rating
+    SELECT k.nimi, a.nimi AS asukoht, f_klubisuurus($1) AS members, ROUND(AVG(i.ranking), 1) AS average_rating
     FROM klubid k
     LEFT JOIN isikud i ON k.id = i.klubis
-    left join asulad a on k.asula = a.id
+    LEFT JOIN asulad a ON k.asula = a.id
     WHERE k.id = $1
     GROUP BY k.nimi, a.nimi
   `
