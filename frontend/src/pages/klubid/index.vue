@@ -1,9 +1,6 @@
 <template>
   <v-container fluid class="mt-4">
-
-    <!-- 1) Search / Filter Controls -->
     <v-row class="mb-4">
-      <!-- "Otsi nime järgi" -->
       <v-col cols="12" sm="4">
         <v-text-field
           v-model="searchName"
@@ -12,7 +9,6 @@
         />
       </v-col>
 
-      <!-- "Tulemusi lehel" (items per page) -->
       <v-col cols="12" sm="4">
         <v-select
           v-model="resultsPerPage"
@@ -22,7 +18,6 @@
         />
       </v-col>
 
-      <!-- "Järjesta: reiting, nimi, liikmete arv" -->
       <v-col cols="12" sm="4">
         <v-select
           v-model="sortBy"
@@ -32,7 +27,12 @@
       </v-col>
     </v-row>
 
-    <!-- 2) Clubs List -->
+    <v-row class="mb-4">
+      <v-col>
+        <v-btn color="primary" @click="openAddClubDialog">Lisa klubi</v-btn>
+      </v-col>
+    </v-row>
+
     <v-row>
       <v-col
         v-for="club in filteredClubs"
@@ -57,7 +57,6 @@
       </v-col>
     </v-row>
 
-    <!-- 3) Pagination & Results Info -->
     <v-row>
       <v-col cols="6">
         <v-pagination
@@ -66,19 +65,23 @@
         />
       </v-col>
 
-      <!-- "Tulemused 1-n" on the right -->
       <v-col cols="6" class="text-right">
         Näitan tulemusi {{ startIndex }}–{{ endIndex }}
         (kokku {{ totalClubs }})
       </v-col>
     </v-row>
+    <AddClubDialog
+      v-model:showDialog="showAddClubDialog"
+    />
   </v-container>
 </template>
 
 <script>
 import {fetchAllClubs} from "@/wrapper/clubsApiWrapper.js";
+import AddClubDialog from "@/components/clubs/AddClubDialog.vue";
 
 export default {
+  components: { AddClubDialog },
   name: "ClubsPage",
   data() {
     return {
@@ -87,6 +90,7 @@ export default {
       sortBy: "Reiting",
       page: 1,
       clubs: [],
+      showAddClubDialog: false,
     }
   },
   computed: {
@@ -154,10 +158,13 @@ export default {
     goToClubDetails(clubId) {
       this.$router.push(`/klubid/${clubId}`)
     },
+
+    openAddClubDialog() {
+      this.showAddClubDialog = true;
+    },
   },
 }
 </script>
 
 <style scoped>
-/* Optional custom styles */
 </style>

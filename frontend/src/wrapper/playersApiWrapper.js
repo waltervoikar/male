@@ -37,6 +37,14 @@ export async function fetchPlayerStatistics(playerId) {
   }
 }
 
+export async function addPlayer(player) {
+  try {
+    await apiClient.post('/players', player);
+  } catch (error) {
+    console.error('Error adding club', error);
+  }
+}
+
 function mapPlayersData(players) {
   return players.map(player => {
     return mapPlayerData(player)

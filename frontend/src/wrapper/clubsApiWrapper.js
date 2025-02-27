@@ -18,6 +18,14 @@ export async function fetchClubById(clubId) {
   }
 }
 
+export async function addClub(club) {
+  try {
+    await apiClient.post('/clubs', club);
+  } catch (error) {
+    console.error('Error adding club', error);
+  }
+}
+
 function mapClubsData(rawClubData) {
   return rawClubData.map(club => {
     return mapClubData(club)

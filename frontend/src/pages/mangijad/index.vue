@@ -27,6 +27,12 @@
       </v-col>
     </v-row>
 
+    <v-row class="mb-4">
+      <v-col>
+        <v-btn color="primary" @click="openAddPlayerDialog">Lisa mängija</v-btn>
+      </v-col>
+    </v-row>
+
     <v-row>
       <v-col cols="12">
         <v-card
@@ -63,14 +69,18 @@
         </span>
       </v-col>
     </v-row>
-
+    <AddPlayerDialog
+      v-model:showDialog="showAddPlayerDialog"
+    />
   </v-container>
 </template>
 
 <script>
 import {fetchAllPlayers} from "@/wrapper/playersApiWrapper.js";
+import AddPlayerDialog from "@/components/players/AddPlayerDialog.vue";
 
 export default {
+  components: { AddPlayerDialog },
   data() {
     return {
       players: [],
@@ -78,6 +88,7 @@ export default {
       resultsPerPage: 5,
       sortBy: "Reiting",
       page: 1,
+      showAddPlayerDialog: false,
     }
   },
 
@@ -96,6 +107,10 @@ export default {
 
     goToPlayerDetails(playerId) {
       this.$router.push(`/mangijad/${playerId}`)
+    },
+
+    openAddPlayerDialog() {
+      this.showAddPlayerDialog = true;
     },
   },
 

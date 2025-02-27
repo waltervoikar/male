@@ -65,7 +65,7 @@ import {addTournament} from "@/wrapper/tournamentsApiWrapper.js";
 import {fetchAllLocations} from "@/wrapper/locationsApiWrapper.js";
 
 export default {
-  name: "AddMatchDialog",
+  name: "AddTournamentDialog",
   props: {
     showDialog: {
       type: Boolean,
