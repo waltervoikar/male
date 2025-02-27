@@ -19,6 +19,14 @@ export async function fetchTournamentById(tournamentId) {
   }
 }
 
+export async function addTournament(tournament) {
+  try {
+    await apiClient.post('/tournaments', tournament);
+  } catch (error) {
+    console.error('Error adding match', error);
+  }
+}
+
 function mapTournamentsData(tournaments) {
   return tournaments.map(tournament => {
     return mapTournamentData(tournament)
@@ -34,3 +42,4 @@ function mapTournamentData(tournament) {
     endDate: formatDate(tournament.loppkuupaev),
   }
 }
+

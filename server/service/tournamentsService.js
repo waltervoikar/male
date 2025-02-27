@@ -44,4 +44,29 @@ const getTournamentById = (req, res) => {
   })
 }
 
-module.exports = { getAllTournaments, getTournamentById }
+const addTournament = (req, res) => {
+  console.log("IN - Add tournament request")
+
+  const { name, location, startDate, endDate } = req.body
+  console.log(`Add tournament: ${name}, ${location}, ${startDate}, ${endDate}`)
+
+  let query = `
+  INSERT INTO turniirid (nimi, asula, alguskuupaev, loppkuupaev)
+  VALUES ($1, $2, $3, $4)
+  RETURNING id
+  `
+
+  pool.query(query, [name, location, startDate, endDate], (err, results) => {
+    if (err) {
+      console.error(err)
+      return res.status(500).send({
+        message: "Error while adding tournament",
+        error: err
+      })
+    }
+    console.log(`OUT - Add tournament result: ${JSON.stringify(results.rows[0])}`)
+    res.status(201).send(results.rows[0])
+  })
+}
+
+module.exports = { getAllTournaments, getTournamentById, addTournament }

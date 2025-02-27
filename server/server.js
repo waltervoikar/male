@@ -1,15 +1,14 @@
 /* eslint-env node */
 const express = require('express');
 const cors = require('cors')
-const {getAllPlayers, getPlayerById, getPlayersByClubId, getPlayerStatistics} = require("./service/playersService");
-const {getAllClubs, getClubById} = require("./service/clubsService");
-const {getAllTournaments, getTournamentById} = require("./service/tournamentsService");
+const {getAllPlayers, getPlayerById, getPlayersByClubId, getPlayerStatistics, addPlayer} = require("./service/playersService");
+const {getAllClubs, getClubById, addClub} = require("./service/clubsService");
+const {getAllTournaments, getTournamentById, addTournament} = require("./service/tournamentsService");
 const {getMatchByTournamentId, addMatchToTournament} = require("./service/matchesService");
+const {getAllLocations} = require("./service/locationsService");
 
 
 const app = express();
-const USE_SSL = process.env.USE_SSL === 'true'
-
 
 app.use(cors({
   origins: ['http://localhost:8080', process.env.CLOUD_URL]
@@ -22,15 +21,20 @@ app.get("/api/players", getAllPlayers)
 app.get("/api/players/:id", getPlayerById)
 app.get("/api/players/club/:id", getPlayersByClubId)
 app.get("/api/players/statistics/:id", getPlayerStatistics)
+app.post("/api/players", addPlayer)
 
 app.get("/api/clubs", getAllClubs)
 app.get("/api/clubs/:id", getClubById)
+app.post("/api/clubs", addClub)
 
 app.get("/api/tournaments", getAllTournaments)
 app.get("/api/tournaments/:id", getTournamentById)
+app.post("/api/tournaments", addTournament)
 
 app.get("/api/matches/:id", getMatchByTournamentId)
 app.post("/api/matches", addMatchToTournament)
+
+app.get("/api/locations", getAllLocations)
 
 if (!process.env.CLOUD_URL) {
   const fs = require('fs');

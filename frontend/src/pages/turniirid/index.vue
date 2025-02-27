@@ -1,5 +1,10 @@
 <template>
   <v-container fluid class="mt-4">
+    <v-row class="mb-4">
+      <v-col>
+        <v-btn color="primary" @click="openAddTournamentDialog">Lisa turniir</v-btn>
+      </v-col>
+    </v-row>
     <h2 class="mb-2">Hetkel toimumas:</h2>
     <v-row class="mb-6">
       <v-col
@@ -80,20 +85,25 @@
         </v-card>
       </v-col>
     </v-row>
-
+    <AddTournamentDialog
+      v-model:showDialog="showAddTournamentDialog"
+    />
   </v-container>
 </template>
 
 <script>
 import {fetchAllTournaments} from "@/wrapper/tournamentsApiWrapper.js";
+import AddTournamentDialog from "@/components/tournaments/AddTournamentDialog.vue";
 
 export default {
   name: 'TournamentsPage',
+  components: { AddTournamentDialog },
   data() {
     return {
       onGoingTournaments: [],
       upcomingTournaments: [],
       finishedTournaments: [],
+      showAddTournamentDialog: false,
     }
   },
 
@@ -117,6 +127,10 @@ export default {
           this.finishedTournaments.push(tournament)
         }
       })
+    },
+
+    openAddTournamentDialog() {
+      this.showAddTournamentDialog = true;
     },
   },
 
