@@ -4,18 +4,18 @@ const cors = require('cors')
 const {getAllPlayers, getPlayerById, getPlayersByClubId, getPlayerStatistics} = require("./service/playersService");
 const {getAllClubs, getClubById} = require("./service/clubsService");
 const {getAllTournaments, getTournamentById} = require("./service/tournamentsService");
-const {getMatchByTournamentId} = require("./service/matchesService");
+const {getMatchByTournamentId, addMatchToTournament} = require("./service/matchesService");
 
 
 const app = express();
 const USE_SSL = process.env.USE_SSL === 'true'
 const USE_CORS = process.env.USE_CORS === 'true'
 
-if (USE_CORS) {
-  app.use(cors({
-    origins: ['http://localhost:8080', "http://frontend:8080"]
-  }));
-}
+
+app.use(cors({
+  origins: ['http://localhost:8080', "http://frontend:8080"]
+}));
+
 
 app.use(express.json());
 
@@ -31,6 +31,7 @@ app.get("/api/tournaments", getAllTournaments)
 app.get("/api/tournaments/:id", getTournamentById)
 
 app.get("/api/matches/:id", getMatchByTournamentId)
+app.post("/api/matches", addMatchToTournament)
 
 if (USE_SSL) {
   const fs = require('fs');
