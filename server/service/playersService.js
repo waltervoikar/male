@@ -51,10 +51,11 @@ const getPlayersByClubId = (req, res) => {
     let query = `
       SELECT i.id, i.eesnimi, i.perenimi, k.nimi AS klubi, i.synniaeg, i.sugu, i.ranking FROM isikud i
         LEFT JOIN KLUBID k ON i.klubis = k.id
-        WHERE i.klubi = $1
+        WHERE i.klubis = $1
   `
     pool.query(query, [id], (err, results) => {
         if (err) {
+            console.log(err)
             return res.status(500).send({
                 message: `Error while reading players for club(id=${id})`,
                 error: err

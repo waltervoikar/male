@@ -1,5 +1,4 @@
 <template>
-  <h2>Mängija statistika</h2>
   <v-container>
 
     <v-row justify="center" align="center" v-if="loading">
