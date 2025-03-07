@@ -129,6 +129,7 @@ const getTopPlayers = (req, res) => {
     console.log(`IN - Get top players request (limit=${limit})`)
     let query = `
         SELECT * FROM isikud
+        WHERE ranking IS NOT NULL
         ORDER BY ranking DESC
         LIMIT $1
     `

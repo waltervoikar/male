@@ -40,9 +40,11 @@
             <v-col cols="12">
               <v-select
                 v-model="newMatch.winner"
-                label="Võitja*"
+                label="Võitja"
                 :items="['Valge', 'Must', 'Viik']"
                 variant="outlined"
+                :error="!isWinnerAndEndTimeValid"
+                :error-messages="!isWinnerAndEndTimeValid ? ['Võitja ja lõppaeg peavad mõlemad olema määratud või mõlemad määramata'] : []"
               ></v-select>
             </v-col>
             <v-col cols="12">
@@ -70,7 +72,7 @@
           variant="elevated"
           color="primary"
           @click="submitNewMatch"
-          :disabled="!isFormValid || isSamePlayer"
+          :disabled="!isFormValid || isSamePlayer || !isWinnerAndEndTimeValid"
         >
           Salvesta
         </v-btn>
@@ -107,6 +109,8 @@ export default {
       },
       playersCache: [],
       endTimeValid: null,
+      formValid: null,
+      endTimeErrorMessage: null,
     };
   },
   computed: {
@@ -115,7 +119,6 @@ export default {
         this.newMatch.white &&
         this.newMatch.black &&
         this.newMatch.startTime &&
-        this.newMatch.winner &&
         this.endTimeValid
       );
     },
@@ -125,6 +128,10 @@ export default {
         this.newMatch.black &&
         this.newMatch.white === this.newMatch.black
       );
+    },
+    isWinnerAndEndTimeValid() {
+      const { winner, endTime } = this.newMatch;
+      return (winner && endTime) || (!winner && !endTime);
     },
   },
   watch: {

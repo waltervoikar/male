@@ -26,8 +26,9 @@ const getOngoingTournaments = (req, res) => {
   console.log("IN - Get ongoing tournaments request")
 
   let query = `
-  SELECT * FROM turniirid t
-  WHERE loppkuupaev IS NULL
+  SELECT t.id, t.nimi, t.alguskuupaev, t.loppkuupaev, a.nimi AS toimumiskoht FROM turniirid t
+  LEFT JOIN asulad a ON t.asula = a.id
+  WHERE loppkuupaev > CURRENT_DATE
   `
 
   pool.query(query, (err, results) => {

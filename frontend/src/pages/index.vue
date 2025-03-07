@@ -64,7 +64,7 @@
                     {{ club.name }}
                   </v-col>
                   <v-col cols="4" class="text-right points">
-                    {{ club.points }}
+                    {{ club.averageRating }}
                   </v-col>
                 </v-row>
               </v-card-title>
@@ -90,24 +90,10 @@ export default {
   components: {TournamentDisplay},
   data() {
     return {
-      ongoingTournaments: [
-        { id: 1, name: 'Tournament 1', matches: [/* match data */] },
-        { id: 2, name: 'Tournament 2', matches: [/* match data */] },
-      ],
-      ongoingMatches: [
-        { id: 1, tournament: 'Tournament 1', player1: 'Player 1', player2: 'Player 2' },
-        { id: 2, tournament: 'Tournament 2', player1: 'Player 3', player2: 'Player 4' },
-      ],
-      topPlayers: [
-        { id: 1, name: 'Player 1', ranking: 2500 },
-        { id: 2, name: 'Player 2', ranking: 2450 },
-        { id: 3, name: 'Player 3', ranking: 2400 },
-      ],
-      topClubs: [
-        {id: 1, name: 'Club 1', points: 100},
-        {id: 2, name: 'Club 2', points: 90},
-        {id: 3, name: 'Club 3', points: 80},
-      ],
+      ongoingTournaments: [],
+      ongoingMatches: [],
+      topPlayers: [],
+      topClubs: [],
       blackPawn,
       whitePawn,
     };
