@@ -123,6 +123,28 @@ const getPlayerStatistics = (req, res) => {
     })
 }
 
+const getTopPlayers = (req, res) => {
+    const limit = parseInt(req.params.limit)
+    console.log(`IN - Get top players request (limit=${limit})`)
+    let query = `
+        SELECT * FROM isikud
+        ORDER BY ranking DESC
+        LIMIT $1
+    `
+    pool.query(query, [limit], (err, results) => {
+        if (err) {
+            console.error(err)
+            return res.status(500).send({
+                message: `Error while reading top players`,
+                error: err
+            })
+        }
+
+        console.log(`OUT - Get top players result (limit=${limit}): ${JSON.stringify(results.rows)}`)
+        res.status(200).send(results.rows)
+    })
+}
+
 const addPlayer = (req, res) => {
     const {firstName, lastName, club, dateOfBirth, gender, ranking} = req.body
     console.log(`IN - Add player(${firstName} ${lastName}) request`)
@@ -145,4 +167,4 @@ const addPlayer = (req, res) => {
     })
 }
 
-module.exports = {getAllPlayers, getPlayerById, getPlayersByClubId, getPlayerStatistics, addPlayer}
+module.exports = { getAllPlayers, getPlayerById, getPlayersByClubId, getPlayerStatistics, addPlayer, getTopPlayers }

@@ -37,6 +37,15 @@ export async function fetchPlayerStatistics(playerId) {
   }
 }
 
+export async function fetchTopPlayers(limit) {
+  try {
+    const response = await apiClient.get( `/players/top/${limit}`);
+    return mapPlayersData(response.data);
+  } catch (error) {
+    console.error('Error fetching top players', error);
+  }
+}
+
 export async function addPlayer(player) {
   try {
     await apiClient.post('/players', player);

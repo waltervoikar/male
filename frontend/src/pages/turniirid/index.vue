@@ -6,85 +6,23 @@
       </v-col>
     </v-row>
     <h2 class="mb-2">Hetkel toimumas:</h2>
-    <v-row class="mb-6">
-      <v-col
-        v-for="(t, index) in onGoingTournaments"
-        :key="index"
-        cols="12"
-        md="12"
-      >
-        <v-card
-          outlined
-          class="mb-2"
-          hover
-          @click="goToTournamentDetails(t.id)"
-        >
-          <v-card-title>{{ t.name }}</v-card-title>
-          <v-card-subtitle>
-            Algus: {{ t.startDate }} <br />
-            Lõpp: {{ t.endDate }}
-          </v-card-subtitle>
-          <v-card-text>
-            Toimumiskoht: {{ t.location }}
-            {{ t.description }}
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+    <TournamentDisplay
+      :tournaments="onGoingTournaments"
+      no-tournaments-text="Hetkel pole ühtegi turniiri toimumas"
+    />
 
     <h2 class="mb-2">Tulemas:</h2>
-    <v-row class="mb-6">
-      <v-col
-        v-for="(t, index) in upcomingTournaments"
-        :key="index"
-        cols="12"
-        md="12"
-      >
-        <v-card
-          outlined
-          class="mb-3"
-          hover
-          @click="goToTournamentDetails(t.id)"
-        >
-          <v-card-title>{{ t.name }}</v-card-title>
-          <v-card-subtitle>
-            Algus: {{ t.startDate }} <br />
-            Lõpp: {{ t.endDate }}
-          </v-card-subtitle>
-          <v-card-text>
-            Toimumiskoht: {{ t.location }}
-            {{ t.description }}
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+    <TournamentDisplay
+      :tournaments="upcomingTournaments"
+      no-tournaments-text="Hetkel pole ühtegi turniiri tulemas"
+    />
 
     <h2 class="mb-2">Lõppenud:</h2>
-    <v-row>
-      <v-col
-        v-for="(t, index) in finishedTournaments"
-        :key="index"
-        cols="12"
-        md="12"
-      >
-        <v-card
-          outlined
-          class="mb-3"
-          hover
-          @click="goToTournamentDetails(t.id)"
-        >
-          <v-card-title>{{ t.name }}</v-card-title>
-          <v-card-subtitle>
-            Algus: {{ t.startDate }} <br />
-            Lõpp: {{ t.endDate }}
-          </v-card-subtitle>
-          <v-card-text>
-            Toimumiskoht: {{ t.location }}
-            {{ t.description }}
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+    <TournamentDisplay
+      :tournaments="finishedTournaments"
+      no-tournaments-text="Hetkel pole ühtegi turniiri lõppenud"
+    />
+
     <AddTournamentDialog
       v-model:showDialog="showAddTournamentDialog"
     />
@@ -94,10 +32,11 @@
 <script>
 import {fetchAllTournaments} from "@/wrapper/tournamentsApiWrapper.js";
 import AddTournamentDialog from "@/components/tournaments/AddTournamentDialog.vue";
+import TournamentDisplay from "@/components/tournaments/TournamentDisplay.vue";
 
 export default {
   name: 'TournamentsPage',
-  components: { AddTournamentDialog },
+  components: {TournamentDisplay, AddTournamentDialog },
   data() {
     return {
       onGoingTournaments: [],

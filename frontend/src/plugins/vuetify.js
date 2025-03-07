@@ -20,7 +20,10 @@ export default createVuetify({
           background: '#F8FAFC',
           primary: "#D9EAFD",
           secondary: "#BCCCDC",
-          dark: "#9AA6B2"
+          dark: "#9AA6B2",
+          gold: "#C9B037",
+          silver: "#B4B4B4",
+          bronze: "#6A3805",
         }
       }
     }

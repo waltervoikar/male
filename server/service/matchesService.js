@@ -3,7 +3,7 @@ const {pool} = require("../database")
 
 const getMatchByTournamentId = (req, res) => {
     const id = parseInt(req.params.id)
-    console.log("IN - Get all matches request")
+    console.log(`IN - Get all matches for tournament(id=${id}) request`)
 
     let query = `
   SELECT
@@ -59,7 +59,27 @@ WHERE
             })
         }
 
-        console.log(`OUT - get all matches result: ${JSON.stringify(results.rows)}`)
+        console.log(`OUT - Get all matches for tournament(id=${id}) result: ${JSON.stringify(results.rows)}`)
+        res.status(200).send(results.rows)
+    })
+}
+
+const getOngoingMatches = (req, res) => {
+    console.log("IN - Get ongoing matches request")
+
+    let query = `
+    SELECT * FROM partiid p
+    WHERE lopphetk IS NULL
+    `
+    pool.query(query, (err, results) => {
+        if (err) {
+            console.error(err)
+            return res.status(500).send({
+                message: "Error while getting ongoing matches",
+                error: err
+            })
+        }
+        console.log("OUT - Get ongoing matches result: " + JSON.stringify(results.rows))
         res.status(200).send(results.rows)
     })
 }
@@ -88,4 +108,4 @@ const addMatchToTournament = (req, res) => {
     })
 }
 
-module.exports = {getMatchByTournamentId, addMatchToTournament}
+module.exports = { getMatchByTournamentId, addMatchToTournament, getOngoingMatches }

@@ -19,6 +19,15 @@ export async function fetchTournamentById(tournamentId) {
   }
 }
 
+export async function fetchOngoingTournaments() {
+  try {
+    const response = await apiClient.get("/tournaments/ongoing");
+    return mapTournamentsData(response.data);
+  } catch (error) {
+    console.error('Error fetching ongoing tournaments', error);
+  }
+}
+
 export async function addTournament(tournament) {
   try {
     await apiClient.post('/tournaments', tournament);

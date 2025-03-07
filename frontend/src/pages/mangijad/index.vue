@@ -70,7 +70,8 @@
       </v-col>
     </v-row>
     <AddPlayerDialog
-      v-model:showDialog="showAddPlayerDialog"
+      :showDialog="showAddPlayerDialog"
+      @player-added="fetchAllPlayersData"
     />
   </v-container>
 </template>

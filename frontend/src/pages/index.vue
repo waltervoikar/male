@@ -1,9 +1,192 @@
 <template>
+  <v-container>
+    <v-row class="mb-4">
+      <v-col cols="12">
+        <h1>Hetkel toimumas:</h1>
+        <TournamentDisplay
+          :tournaments="ongoingTournaments"
+          no-tournaments-text="Hetkel pole ühtegi turniiri toimumas"
+        />
+      </v-col>
+    </v-row>
 
-  <p>siin on esileht. selle arendamise jätame viimaseks</p>
-
+    <v-row class="mb-4">
+      <v-col cols="12">
+        <h1>Hetkel käimasolevad partiid:</h1>
+        <v-row v-if="ongoingMatches.length">
+          <v-col cols="12" md="6" lg="4" v-for="match in ongoingMatches" :key="match.id">
+            <v-card class="mb-2">
+              <v-card-title class="tournament-title">{{ match.tournament }}</v-card-title>
+              <v-card-subtitle class="player-names d-flex align-end">
+                <img :src="whitePawn" alt="Black Pawn" class="pawn-icon mr-2" />{{ match.player1 }} -
+                {{ match.player2 }}<img :src="blackPawn" alt="White Pawn" class="pawn-icon ml-2" />
+              </v-card-subtitle>
+            </v-card>
+          </v-col>
+        </v-row>
+        <v-row v-else class="mb-4">
+          <v-col cols="12">
+            Hetkel ei ole ühtegi partiid käimas
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+    <v-row class="mb-4">
+      <v-col cols="12" md="6">
+        <h2>TOP mängijad</h2>
+        <v-row>
+          <v-col cols="10" v-for="(player, index) in topPlayers" :key="player.id">
+            <v-card>
+              <v-card-title>
+                <v-row align="center">
+                  <v-col cols="8">
+                    <v-chip :color="getChipColor(index)" class="ma-2" label>{{ index + 1 }}</v-chip>
+                    {{ player.name }}
+                  </v-col>
+                  <v-col cols="4" class="text-right points">
+                    {{ player.ranking }}
+                  </v-col>
+                </v-row>
+              </v-card-title>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-col>
+      <v-col cols="12" md="6">
+        <h2>TOP Klubid</h2>
+        <v-row>
+          <v-col cols="10" v-for="(club, index) in topClubs" :key="club.id">
+            <v-card>
+              <v-card-title>
+                <v-row align="center">
+                  <v-col cols="8">
+                    <v-chip :color="getChipColor(index)" class="ma-2" label>{{ index + 1 }}</v-chip>
+                    {{ club.name }}
+                  </v-col>
+                  <v-col cols="4" class="text-right points">
+                    {{ club.points }}
+                  </v-col>
+                </v-row>
+              </v-card-title>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
-<script setup>
-  //
+<script>
+import blackPawn from '@/assets/black-pawn.svg';
+import whitePawn from '@/assets/white-pawn.svg';
+import TournamentDisplay from "@/components/tournaments/TournamentDisplay.vue";
+import {fetchOngoingTournaments} from "@/wrapper/tournamentsApiWrapper.js";
+import {fetchTopPlayers} from "@/wrapper/playersApiWrapper.js";
+import {fetchTopClubs} from "@/wrapper/clubsApiWrapper.js";
+import {fetchOngoingMatches} from "@/wrapper/matchesApiWrapper.js";
+
+export default {
+  name: 'FrontPage',
+  components: {TournamentDisplay},
+  data() {
+    return {
+      ongoingTournaments: [
+        { id: 1, name: 'Tournament 1', matches: [/* match data */] },
+        { id: 2, name: 'Tournament 2', matches: [/* match data */] },
+      ],
+      ongoingMatches: [
+        { id: 1, tournament: 'Tournament 1', player1: 'Player 1', player2: 'Player 2' },
+        { id: 2, tournament: 'Tournament 2', player1: 'Player 3', player2: 'Player 4' },
+      ],
+      topPlayers: [
+        { id: 1, name: 'Player 1', ranking: 2500 },
+        { id: 2, name: 'Player 2', ranking: 2450 },
+        { id: 3, name: 'Player 3', ranking: 2400 },
+      ],
+      topClubs: [
+        {id: 1, name: 'Club 1', points: 100},
+        {id: 2, name: 'Club 2', points: 90},
+        {id: 3, name: 'Club 3', points: 80},
+      ],
+      blackPawn,
+      whitePawn,
+    };
+  },
+  methods: {
+    getChipColor(index) {
+      switch (index) {
+        case 0:
+          return 'gold';
+        case 1:
+          return 'silver';
+        case 2:
+          return 'bronze';
+        default:
+          return 'primary';
+      }
+    },
+
+    loadData() {
+      this.loadOngoingTournaments()
+      this.loadOngoingMatches()
+      this.loadTopPlayers()
+      this.loadTopClubs()
+    },
+
+    async loadOngoingTournaments() {
+      this.ongoingTournaments = await fetchOngoingTournaments()
+    },
+
+    async loadOngoingMatches() {
+      this.ongoingMatches = await fetchOngoingMatches()
+    },
+
+    async loadTopPlayers() {
+      this.topPlayers = await fetchTopPlayers(3)
+    },
+
+    async loadTopClubs() {
+      this.topClubs = await fetchTopClubs(3)
+    },
+  },
+
+  created() {
+    this.$watch(
+      () => this.$route.params.id,
+      this.loadData,
+      {immediate: true}
+    )
+  },
+};
 </script>
+
+<style scoped>
+h1, h2 {
+  margin-bottom: 20px;
+}
+
+.mb-4 {
+  margin-bottom: 32px;
+}
+
+.points {
+  font-size: 1.1rem;
+  color: #9AA6B2;
+}
+
+.tournament-title {
+  font-size: 0.9rem;
+  color: #9AA6B2;
+}
+
+.player-names {
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding-bottom: 8px;
+}
+
+.pawn-icon {
+  width: 24px;
+  height: 24px;
+}
+</style>

@@ -18,6 +18,15 @@ export async function addMatchToTournament(match) {
   }
 }
 
+export async function fetchOngoingMatches() {
+  try {
+    const response = await apiClient.get("/matches/ongoing");
+    return mapMatchesData(response.data);
+  } catch (error) {
+    console.error('Error fetching ongoing matches', error);
+  }
+}
+
 function mapMatchesData(matches) {
   return matches.map(match => {
     return mapMatchData(match)

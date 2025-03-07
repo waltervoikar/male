@@ -49,6 +49,32 @@ const getClubById = (req, res) => {
     })
 }
 
+const getTopClubs = (req, res) => {
+    const limit = parseInt(req.params.limit)
+    console.log(`IN - Get top clubs (limit=${limit})`)
+
+    let query = `
+    SELECT k.nimi, ROUND(AVG(i.ranking), 1) as average_rating
+    FROM klubid k
+    LEFT JOIN isikud i ON k.id = i.klubis
+    GROUP BY k.nimi
+    HAVING AVG(i.ranking) IS NOT NULL
+    ORDER BY average_rating DESC
+    LIMIT $1
+    `
+    pool.query(query, [limit], (err, results) => {
+        if (err) {
+            console.error(err)
+            return res.status(500).send({
+                message: "Error while reading top clubs:",
+                error: err
+            })
+        }
+        console.log("OUT - Get top clubs" + JSON.stringify(results.rows))
+        res.status(200).send(results.rows)
+    })
+}
+
 const addClub = (req, res) => {
     console.log("IN - Add club request")
 
@@ -75,4 +101,4 @@ const addClub = (req, res) => {
     })
 }
 
-module.exports = {getAllClubs, getClubById, addClub}
+module.exports = { getAllClubs, getClubById, addClub, getTopClubs }

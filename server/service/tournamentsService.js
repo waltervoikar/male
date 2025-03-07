@@ -22,6 +22,27 @@ const getAllTournaments = (req, res) => {
   })
 }
 
+const getOngoingTournaments = (req, res) => {
+  console.log("IN - Get ongoing tournaments request")
+
+  let query = `
+  SELECT * FROM turniirid t
+  WHERE loppkuupaev IS NULL
+  `
+
+  pool.query(query, (err, results) => {
+    if (err) {
+      console.error(err)
+      return res.status(500).send({
+        message: "Error while reading ongoing tournaments",
+        error: err
+      })
+    }
+    console.log("OUT - Get ongoing tournaments result: " + JSON.stringify(results.rows))
+    res.status(200).send(results.rows)
+  })
+}
+
 const getTournamentById = (req, res) => {
   const id = parseInt(req.params.id)
   console.log(`IN - Get tournament(id=${id}) request`)
@@ -34,6 +55,7 @@ const getTournamentById = (req, res) => {
 
   pool.query(query, [id], (err, results) => {
     if (err) {
+      console.error(err)
       return res.status(500).send({
         message: `Error while reading tournament(id=${id})`,
         error: err
@@ -69,4 +91,4 @@ const addTournament = (req, res) => {
   })
 }
 
-module.exports = { getAllTournaments, getTournamentById, addTournament }
+module.exports = { getAllTournaments, getTournamentById, addTournament, getOngoingTournaments }

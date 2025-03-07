@@ -26,6 +26,15 @@ export async function addClub(club) {
   }
 }
 
+export async function fetchTopClubs(limit) {
+  try {
+    const response = await apiClient.get( `/clubs/top/${limit}`);
+    return mapClubsData(response.data);
+  } catch (error) {
+    console.error('Error fetching top clubs', error);
+  }
+}
+
 function mapClubsData(rawClubData) {
   return rawClubData.map(club => {
     return mapClubData(club)
