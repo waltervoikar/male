@@ -40,7 +40,7 @@ app.post("/api/matches", addMatchToTournament)
 
 app.get("/api/locations", getAllLocations)
 
-if (!process.env.CLOUD_URL && false) {
+if (!process.env.CLOUD_URL) {
   const fs = require('fs');
   const https = require('https');
 
