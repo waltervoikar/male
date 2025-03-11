@@ -1,13 +1,12 @@
 const {pool} = require("../database")
+const {SELECT_ALL_PLAYERS, SELECT_PLAYER_BY_ID, SELECT_ALL_PLAYERS_IN_CLUB, SELECT_PLAYER_STATISTICS,
+    SELECT_TOP_PLAYERS, INSERT_PLAYER
+} = require("./queries");
 
 const getAllPlayers = (req, res) => {
     console.log("IN - Get all players request")
 
-    let query = `
-      SELECT i.id, i.eesnimi, i.perenimi, k.nimi AS klubi, i.synniaeg, i.sugu, i.ranking FROM isikud i
-        LEFT JOIN klubid k ON i.klubis = k.id
-  `
-    pool.query(query, (err, results) => {
+    pool.query(SELECT_ALL_PLAYERS, (err, results) => {
         if (err) {
             console.log(err)
             return res.status(500).send({
@@ -25,12 +24,7 @@ const getPlayerById = (req, res) => {
     const id = parseInt(req.params.id)
     console.log(`IN - Get player(id=${id}) request`)
 
-    let query = `
-      SELECT i.id, i.eesnimi, i.perenimi, k.nimi AS klubi, i.synniaeg, i.sugu, i.ranking FROM isikud i
-        LEFT JOIN klubid k ON i.klubis = k.id
-        WHERE i.id = $1
-  `
-    pool.query(query, [id], (err, results) => {
+    pool.query(SELECT_PLAYER_BY_ID, [id], (err, results) => {
         if (err) {
             console.error(err)
             return res.status(500).send({
@@ -48,12 +42,7 @@ const getPlayersByClubId = (req, res) => {
     const id = parseInt(req.params.id)
     console.log(`IN - Get players for club(id=${id})`)
 
-    let query = `
-      SELECT i.id, i.eesnimi, i.perenimi, k.nimi AS klubi, i.synniaeg, i.sugu, i.ranking FROM isikud i
-        LEFT JOIN KLUBID k ON i.klubis = k.id
-        WHERE i.klubis = $1
-  `
-    pool.query(query, [id], (err, results) => {
+    pool.query(SELECT_ALL_PLAYERS_IN_CLUB, [id], (err, results) => {
         if (err) {
             console.log(err)
             return res.status(500).send({
@@ -71,47 +60,7 @@ const getPlayerStatistics = (req, res) => {
     const id = parseInt(req.params.id)
     console.log(`IN - Get player(id=${id}) statistics request`)
 
-    let query = `
-    SELECT
-    COUNT(*) AS match_count,
-    SUM(
-      CASE
-        WHEN (p.valge = $1 AND p.valge_tulemus = 2)
-          OR (p.must = $1 AND p.must_tulemus = 2)
-        THEN 1 ELSE 0
-      END
-    ) AS win_count,
-    SUM(
-      CASE
-        WHEN p.valge = $1 THEN 1 ELSE 0
-      END
-    ) AS white_match_count,
-    SUM(
-      CASE
-        WHEN p.valge = $1 AND p.valge_tulemus = 2
-        THEN 1 ELSE 0
-      END
-    ) AS white_win_count,
-    SUM(
-      CASE
-        WHEN p.must = $1 THEN 1 ELSE 0
-      END
-    ) AS black_match_count,
-    SUM(
-      CASE
-        WHEN p.must = $1 AND p.must_tulemus = 2
-        THEN 1 ELSE 0
-      END
-    ) AS black_win_count,
-    (SELECT (p.lopphetk - p.algushetk) AS duration FROM partiid p
-     WHERE p.valge = $1 or p.must = $1
-     ORDER by duration DESC
-     LIMIT 1 ) AS longest_match
-    FROM partiid p
-    WHERE p.valge = $1
-       OR p.must = $1;
-  `
-    pool.query(query, [id], (err, results) => {
+    pool.query(SELECT_PLAYER_STATISTICS, [id], (err, results) => {
         if (err) {
             return res.status(500).send({
                 message: `Error while reading player statistics for player(id=${id})`,
@@ -127,13 +76,8 @@ const getPlayerStatistics = (req, res) => {
 const getTopPlayers = (req, res) => {
     const limit = parseInt(req.params.limit)
     console.log(`IN - Get top players request (limit=${limit})`)
-    let query = `
-        SELECT * FROM isikud
-        WHERE ranking IS NOT NULL
-        ORDER BY ranking DESC
-        LIMIT $1
-    `
-    pool.query(query, [limit], (err, results) => {
+
+    pool.query(SELECT_TOP_PLAYERS, [limit], (err, results) => {
         if (err) {
             console.error(err)
             return res.status(500).send({
@@ -151,11 +95,7 @@ const addPlayer = (req, res) => {
     const {firstName, lastName, club, dateOfBirth, gender, ranking} = req.body
     console.log(`IN - Add player(${firstName} ${lastName}) request`)
 
-    let query = `
-        INSERT INTO isikud (eesnimi, perenimi, klubis, synniaeg, sugu, ranking)
-        VALUES ($1, $2, $3, $4, $5, $6)
-    `
-    pool.query(query, [firstName, lastName, club, dateOfBirth, gender, ranking], (err, results) => {
+    pool.query(INSERT_PLAYER, [firstName, lastName, club, dateOfBirth, gender, ranking], (err, results) => {
         if (err) {
             console.error(err)
             return res.status(500).send({

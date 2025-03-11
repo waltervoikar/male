@@ -1,55 +1,11 @@
 const {pool} = require("../database")
-
+const {SELECT_MATCH_BY_ID, getAddOrUpdateQuery, SELECT_ONGOING_MATCHES} = require("./queries");
 
 const getMatchByTournamentId = (req, res) => {
     const id = parseInt(req.params.id)
     console.log(`IN - Get all matches for tournament(id=${id}) request`)
 
-    let query = `
-  SELECT
-    p.turniir,
-    p.algushetk,
-    p.lopphetk,
-    valge.id AS valge_id,
-    valge.eesnimi AS valge_eesnimi,
-    valge.perenimi AS valge_perenimi,
-    valge.klubi AS valge_klubi,
-    must.id AS must_id,
-    must.eesnimi AS must_eesnimi,
-    must.perenimi AS must_perenimi,
-    must.klubi AS must_klubi,
-    CASE
-      WHEN valge_tulemus = 2 THEN 'valge'
-      WHEN must_tulemus = 2 THEN 'must'
-      ELSE 'viik'
-    END AS voitja
-FROM
-    partiid p
-LEFT JOIN (
-    SELECT
-        i.id,
-        i.eesnimi,
-        i.perenimi,
-        k.nimi AS klubi
-    FROM
-        isikud i
-    LEFT JOIN
-        klubid k ON i.klubis = k.id
-) valge ON valge.id = p.valge
-LEFT JOIN (
-    SELECT
-        i.id,
-        i.eesnimi,
-        i.perenimi,
-        k.nimi AS klubi
-    FROM
-        isikud i
-    LEFT JOIN
-        klubid k ON i.klubis = k.id
-) must ON must.id = p.must
-WHERE
-    p.turniir = $1;
-  `
+    let query = SELECT_MATCH_BY_ID + " WHERE p.turniir = $1"
     pool.query(query, [id], (err, results) => {
         if (err) {
             console.error(err)
@@ -64,14 +20,28 @@ WHERE
     })
 }
 
+const getMatchById = (req, res) => {
+    const id = parseInt(req.params.id)
+    console.log(`IN - Get match by id=${id}`)
+
+    let query = SELECT_MATCH_BY_ID + " WHERE p.id = $1"
+    pool.query(query, [id], (err, results) => {
+        if (err) {
+            console.error(err)
+            return res.status(500).send({
+                message: "Error while getting match by id",
+                error: err
+            })
+        }
+        console.log("OUT - Get match by id result: " + JSON.stringify(results.rows))
+        res.status(200).send(results.rows[0])
+    })
+}
+
 const getOngoingMatches = (req, res) => {
     console.log("IN - Get ongoing matches request")
 
-    let query = `
-    SELECT * FROM partiid p
-    WHERE lopphetk IS NULL
-    `
-    pool.query(query, (err, results) => {
+    pool.query(SELECT_ONGOING_MATCHES, (err, results) => {
         if (err) {
             console.error(err)
             return res.status(500).send({
@@ -85,14 +55,22 @@ const getOngoingMatches = (req, res) => {
 }
 
 const addMatchToTournament = (req, res) => {
-    const {tournamentId, white, black, startTime, endTime} = req.body
-    console.log(`IN - Add match to tournament(id=${tournamentId}) request: ${JSON.stringify(req.body)}`)
+    const {tournamentId, white, black, startTime, endTime, winner, isUpdate, matchId} = req.body
+    const update = JSON.parse(isUpdate);
+    console.log(`IN - Add match to tournament(id=${tournamentId}, update=${update}) request: ${JSON.stringify(req.body)}`);
 
-    let query = `
-    INSERT INTO partiid (turniir, valge, must, algushetk, lopphetk)
-    VALUES ($1, $2, $3, $4, $5)
-    `
-    pool.query(query, [tournamentId, white, black, startTime, endTime], (err, results) => {
+    if (update && !matchId) {
+        res.status(400).send({
+            msg: "Match id is required for update"
+        })
+        return
+    }
+
+    const white_result = winner === "valge" ? 2 : winner === "must" ? 0 : 1;
+    const black_result = winner === "must" ? 2 : winner === "valge" ? 0 : 1;
+
+    const query = getAddOrUpdateQuery(update)
+    pool.query(query, [tournamentId, white, black, startTime, endTime, white_result, black_result], (err, results) => {
         if (err) {
             console.error(err)
             return res.status(500).send({
@@ -101,11 +79,11 @@ const addMatchToTournament = (req, res) => {
             })
         }
 
-        console.log(`IN - Add match to tournament(id=${tournamentId}) result: ${JSON.stringify(results.rows)}`)
+        console.log(`IN - Add match to tournament(id=${tournamentId}, update=${update}) result: ${JSON.stringify(results.rows)}`)
         res.status(200).send({
             msg: "Match added successfully"
         })
     })
 }
 
-module.exports = { getMatchByTournamentId, addMatchToTournament, getOngoingMatches }
+module.exports = { getMatchByTournamentId, getMatchById, addMatchToTournament, getOngoingMatches }

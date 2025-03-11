@@ -1,12 +1,10 @@
 const { pool } = require("../database")
+const {SELECT_ALL_LOCATIONS} = require("./queries");
 
 const getAllLocations = (req, res) => {
     console.log("IN - Get all locations request")
 
-    let query = `
-        SELECT * FROM asulad a
-    `
-    pool.query(query, (err, results) => {
+    pool.query(SELECT_ALL_LOCATIONS, (err, results) => {
         if (err) {
         console.error(err)
         return res.status(500).send({

@@ -1,15 +1,10 @@
 const { pool } = require("../database")
+const {SELECT_ALL_TOURNAMENTS, SELECT_ONGOING_TOURNAMENTS, SELECT_TOURNAMENT_BY_ID, INSERT_TOURNAMENT} = require("./queries");
 
 const getAllTournaments = (req, res) => {
   console.log("IN - Get all tournaments request")
 
-  let query = `
-  SELECT t.id, t.nimi, t.alguskuupaev, t.loppkuupaev, a.nimi AS toimumiskoht FROM turniirid t
-  LEFT JOIN asulad a ON t.asula = a.id
-  ORDER BY loppkuupaev DESC
-  `
-
-  pool.query(query, (err, results) => {
+  pool.query(SELECT_ALL_TOURNAMENTS, (err, results) => {
     if (err) {
       console.log(err)
       return res.status(500).send({
@@ -25,13 +20,7 @@ const getAllTournaments = (req, res) => {
 const getOngoingTournaments = (req, res) => {
   console.log("IN - Get ongoing tournaments request")
 
-  let query = `
-  SELECT t.id, t.nimi, t.alguskuupaev, t.loppkuupaev, a.nimi AS toimumiskoht FROM turniirid t
-  LEFT JOIN asulad a ON t.asula = a.id
-  WHERE loppkuupaev > CURRENT_DATE
-  `
-
-  pool.query(query, (err, results) => {
+  pool.query(SELECT_ONGOING_TOURNAMENTS, (err, results) => {
     if (err) {
       console.error(err)
       return res.status(500).send({
@@ -48,13 +37,7 @@ const getTournamentById = (req, res) => {
   const id = parseInt(req.params.id)
   console.log(`IN - Get tournament(id=${id}) request`)
 
-  let query = `
-  SELECT t.id, t.nimi, t.alguskuupaev, t.loppkuupaev, a.nimi AS toimumiskoht FROM turniirid t
-  LEFT JOIN asulad a ON t.asula = a.id
-  WHERE t.id = $1
-  `
-
-  pool.query(query, [id], (err, results) => {
+  pool.query(SELECT_TOURNAMENT_BY_ID, [id], (err, results) => {
     if (err) {
       console.error(err)
       return res.status(500).send({
@@ -73,13 +56,7 @@ const addTournament = (req, res) => {
   const { name, location, startDate, endDate } = req.body
   console.log(`Add tournament: ${name}, ${location}, ${startDate}, ${endDate}`)
 
-  let query = `
-  INSERT INTO turniirid (nimi, asula, alguskuupaev, loppkuupaev)
-  VALUES ($1, $2, $3, $4)
-  RETURNING id
-  `
-
-  pool.query(query, [name, location, startDate, endDate], (err, results) => {
+  pool.query(INSERT_TOURNAMENT, [name, location, startDate, endDate], (err, results) => {
     if (err) {
       console.error(err)
       return res.status(500).send({

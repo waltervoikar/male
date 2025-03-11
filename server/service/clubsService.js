@@ -1,15 +1,10 @@
 const {pool} = require("../database")
+const {SELECT_ALL_CLUBS, SELECT_CLUB_BY_ID, SELECT_TOP_CLUBS, INSERT_CLUB} = require("./queries");
 
 const getAllClubs = (req, res) => {
     console.log("IN - Get all clubs request")
 
-    let query = `
-    SELECT k.*, COUNT(i.id) as members, ROUND(AVG(i.ranking), 1) as average_rating
-    FROM klubid k
-    LEFT JOIN isikud i ON k.id = i.klubis
-    GROUP BY k.id
-  `
-    pool.query(query, (err, results) => {
+    pool.query(SELECT_ALL_CLUBS, (err, results) => {
         if (err) {
             console.error(err)
             return res.status(500).send({
@@ -27,15 +22,7 @@ const getClubById = (req, res) => {
     const id = parseInt(req.params.id)
     console.log(`IN - Get club(id=${id}) request`)
 
-    let query = `
-    SELECT k.nimi, a.nimi AS asukoht, f_klubisuurus($1) AS members, ROUND(AVG(i.ranking), 1) AS average_rating
-    FROM klubid k
-    LEFT JOIN isikud i ON k.id = i.klubis
-    LEFT JOIN asulad a ON k.asula = a.id
-    WHERE k.id = $1
-    GROUP BY k.nimi, a.nimi
-  `
-    pool.query(query, [id], (err, results) => {
+    pool.query(SELECT_CLUB_BY_ID, [id], (err, results) => {
         if (err) {
             console.error(err)
             return res.status(500).send({
@@ -53,16 +40,7 @@ const getTopClubs = (req, res) => {
     const limit = parseInt(req.params.limit)
     console.log(`IN - Get top clubs (limit=${limit})`)
 
-    let query = `
-    SELECT k.nimi, ROUND(AVG(i.ranking), 1) as average_rating
-    FROM klubid k
-    LEFT JOIN isikud i ON k.id = i.klubis
-    GROUP BY k.nimi
-    HAVING AVG(i.ranking) IS NOT NULL
-    ORDER BY average_rating DESC
-    LIMIT $1
-    `
-    pool.query(query, [limit], (err, results) => {
+    pool.query(SELECT_TOP_CLUBS, [limit], (err, results) => {
         if (err) {
             console.error(err)
             return res.status(500).send({
@@ -76,18 +54,10 @@ const getTopClubs = (req, res) => {
 }
 
 const addClub = (req, res) => {
-    console.log("IN - Add club request")
-
     const {name, location} = req.body
-    console.log(`Add club: ${name}, ${location}`)
+    console.log(`IN: Add club request: club(name=${name}, location=${location})`)
 
-    let query = `
-    INSERT INTO klubid (nimi, asula)
-    VALUES ($1, $2)
-    RETURNING id
-  `
-
-    pool.query(query, [name, location], (err, results) => {
+    pool.query(INSERT_CLUB, [name, location], (err, results) => {
         if (err) {
             console.error(err)
             return res.status(500).send({
