@@ -190,14 +190,6 @@ const SELECT_TOURNAMENT_BY_ID = `
   WHERE t.id = $1
 `;
 
-const INSERT_TOURNAMENT = `
-  INSERT INTO turniirid (nimi, asula, alguskuupaev, loppkuupaev)
-  VALUES ($1,
-      (SELECT id FROM asulad WHERE nimi = $2),
-      $3,
-      $4)
-`;
-
 function getAddOrUpdateTournamentQuery(isUpdate) {
     if (isUpdate) {
         return `
@@ -246,11 +238,21 @@ const SELECT_TOP_CLUBS = `
     LIMIT $1
 `;
 
-const INSERT_CLUB = `
-    INSERT INTO klubid (nimi, asula)
-    VALUES ($1, $2)
-    RETURNING id
-`;
+function getAddOrUpdateClubQuery(isUpdate) {
+    if (isUpdate) {
+        return `
+        UPDATE klubid
+        SET (nimi, asula) = ($1, $2)
+        WHERE id = $3
+        `
+    } else {
+        return `
+            INSERT INTO klubid (nimi, asula)
+            VALUES ($1, $2)
+            RETURNING id
+        `
+    }
+}
 
 module.exports = {
     SELECT_MATCH_BY_ID,
@@ -270,5 +272,5 @@ module.exports = {
     SELECT_ALL_CLUBS,
     SELECT_CLUB_BY_ID,
     SELECT_TOP_CLUBS,
-    INSERT_CLUB,
+    getAddOrUpdateClubQuery
 };

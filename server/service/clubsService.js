@@ -1,5 +1,5 @@
 const {pool} = require("../database")
-const {SELECT_ALL_CLUBS, SELECT_CLUB_BY_ID, SELECT_TOP_CLUBS, INSERT_CLUB} = require("./queries");
+const {SELECT_ALL_CLUBS, SELECT_CLUB_BY_ID, SELECT_TOP_CLUBS, INSERT_CLUB, getAddOrUpdateClubQuery} = require("./queries");
 
 const getAllClubs = (req, res) => {
     console.log("IN - Get all clubs request")
@@ -54,10 +54,17 @@ const getTopClubs = (req, res) => {
 }
 
 const addClub = (req, res) => {
-    const {name, location} = req.body
+    const {name, location, isUpdate, clubId} = req.body
+    const update = JSON.parse(isUpdate)
     console.log(`IN: Add club request: club(name=${name}, location=${location})`)
 
-    pool.query(INSERT_CLUB, [name, location], (err, results) => {
+    const query = getAddOrUpdateClubQuery(update)
+    let values = [name, location]
+    if (update) {
+        values.push(clubId)
+    }
+
+    pool.query(query, values, (err, results) => {
         if (err) {
             console.error(err)
             return res.status(500).send({

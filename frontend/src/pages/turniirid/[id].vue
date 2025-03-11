@@ -59,10 +59,10 @@
       @match-updated:success="fetchTournament"
     />
     <AddTournamentDialog v-if="showModifyTournamentDialog"
-      v-model:showDialog="showModifyTournamentDialog"
-      :is-update="true"
-      :tournament-id="tournamentId"
-      @dialog-closed="closeModifyTournamentDialog"
+                         v-model:showDialog="showModifyTournamentDialog"
+                         :is-update="true"
+                         :tournament-id="tournamentId"
+                         @dialog-closed="closeModifyTournamentDialog"
     />
   </v-container>
 </template>

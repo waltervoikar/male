@@ -31,6 +31,12 @@
         </v-col>
       </v-row>
 
+      <v-row>
+        <v-col>
+          <v-btn color="primary" @click="openModifyClubDialog">Muuda klubi</v-btn>
+        </v-col>
+      </v-row>
+
       <v-row cols="12">
         <v-col>
           <v-divider :thickness="3"></v-divider>
@@ -52,22 +58,30 @@
         Tagasi klubide lehele
       </v-btn>
     </div>
+    <AddClubDialog v-if="showModifyClubDialog"
+                   v-model:show-dialog="showModifyClubDialog"
+                   :is-update="true"
+                   :club-id="clubId"
+    />
   </v-container>
 </template>
 
 <script>
 import {fetchClubById} from "@/wrapper/clubsApiWrapper.js";
 import PlayersSearchTable from "@/components/clubs/PlayersSearchTable.vue";
+import AddClubDialog from "@/components/clubs/AddClubDialog.vue";
 
 export default {
   name: 'ClubDetailsPage',
   components: {
+    AddClubDialog,
     PlayersSearchTable
   },
   data() {
     return {
       club: null,
       clubId: null,
+      showModifyClubDialog: false,
     }
   },
   created() {
@@ -81,6 +95,9 @@ export default {
   methods: {
     async fetchClubData() {
       this.club = await fetchClubById(this.clubId)
+    },
+    openModifyClubDialog() {
+      this.showModifyClubDialog = true;
     },
   }
 

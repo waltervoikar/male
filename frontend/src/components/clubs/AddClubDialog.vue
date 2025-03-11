@@ -47,7 +47,7 @@
 
 <script>
 import {fetchAllLocations} from "@/wrapper/locationsApiWrapper.js";
-import {addClub} from "@/wrapper/clubsApiWrapper.js";
+import {addClub, fetchClubById} from "@/wrapper/clubsApiWrapper.js";
 
 export default {
   name: "AddClubDialog",
@@ -56,6 +56,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    isUpdate: {
+      type: Boolean,
+      default: false,
+    },
+    clubId: {
+      type: String,
+      default: null,
+    }
   },
   data() {
     return {
@@ -85,10 +93,17 @@ export default {
   },
   created() {
     this.loadLocationsCache();
+    if (this.isUpdate && this.clubId) {
+      this.loadClubDataForUpdate()
+    }
   },
   methods: {
     async loadLocationsCache() {
       this.locationCache = await fetchAllLocations();
+    },
+    async loadClubDataForUpdate() {
+      this.newClub = await fetchClubById(this.clubId)
+      console.log(this.newClub)
     },
     closeDialog() {
       this.showAddClubDialog = false;
@@ -104,6 +119,8 @@ export default {
       const club = {
         name: this.newClub.name,
         location: this.newClub.location,
+        isUpdate: this.isUpdate,
+        clubId: this.clubId,
       };
       await addClub(club);
       this.closeDialog();
