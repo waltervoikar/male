@@ -30,44 +30,27 @@
             color="secondary"
             @click.stop="openMatchDialog(item)"
           >
-            Detailid
+            Muuda
           </v-btn>
         </v-row>
       </template>
     </v-data-table>
 
-    <!-- Partii detailide dialoog -->
-    <v-dialog
-      v-model="showDialog"
-      max-width="600"
-    >
-      <v-card v-if="selectedMatch">
-        <v-card-title>
-          <strong>{{ selectedMatch.white.fullName }}</strong> vs <strong>{{ selectedMatch.black.fullName }}</strong>
-        </v-card-title>
-
-        <v-card-subtitle>
-          {{ selectedMatch.white.club }} | {{ selectedMatch.black.club }}
-        </v-card-subtitle>
-
-        <v-card-text>
-          {{ selectedMatch.description }}
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="dark" text @click="closeMatchDialog">
-            Sulge
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <AddMatchDialog v-if="selectedMatch"
+      :tournamentId="tournamentId"
+      v-model:showDialog="showDialog"
+      :is-update="true"
+      :match-id="selectedMatch.id"
+      @dialog-closed="closeMatchDialog"
+    />
 </template>
 
 <script>
-import { fetchMatchesByTournamentId } from "@/wrapper/matchesApiWrapper.js";
+import {fetchMatchesByTournamentId} from "@/wrapper/matchesApiWrapper.js";
+import AddMatchDialog from "@/components/tournaments/AddMatchDialog.vue";
 
 export default {
+  components: {AddMatchDialog},
   data() {
     return {
       headers: [
@@ -114,6 +97,10 @@ export default {
       this.showDialog = false
       this.selectedMatch = null
     },
+
+    nukeMatch() {
+      // are you sure
+    }
   }
 }
 </script>

@@ -2,7 +2,7 @@
   <v-dialog v-model="showAddMatchDialog" max-width="500">
     <v-card>
       <v-card-title>
-        <span class="headline">Lisa partii</span>
+        <span class="headline">{{ isUpdate ? 'Muuda partiid' : 'Lisa partii' }}</span>
       </v-card-title>
       <v-card-text>
         <v-container>
@@ -71,10 +71,10 @@
         <v-btn
           variant="elevated"
           color="primary"
-          @click="submitNewMatch"
+          @click="submitMatch"
           :disabled="!isFormValid || isSamePlayer || !isWinnerAndEndTimeValid"
         >
-          Salvesta
+          {{ isUpdate ? 'Uuenda' : 'Salvesta' }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -83,7 +83,7 @@
 
 <script>
 import { fetchAllPlayers } from "@/wrapper/playersApiWrapper.js";
-import { addMatchToTournament } from "@/wrapper/matchesApiWrapper.js";
+import { addMatchToTournament, fetchMatchById } from "@/wrapper/matchesApiWrapper.js";
 
 export default {
   name: "AddMatchDialog",
@@ -93,6 +93,14 @@ export default {
       required: true,
     },
     showDialog: {
+      type: Boolean,
+      default: false,
+    },
+    matchId: {
+      type: Number,
+      default: null,
+    },
+    isUpdate: {
       type: Boolean,
       default: false,
     },
@@ -144,10 +152,23 @@ export default {
   },
   created() {
     this.loadPlayersCache();
+    if (this.isUpdate && this.matchId) {
+      this.loadMatchData();
+    }
   },
   methods: {
     async loadPlayersCache() {
       this.playersCache = await fetchAllPlayers();
+    },
+    async loadMatchData() {
+      const match = await fetchMatchById(this.matchId);
+      this.newMatch = {
+        white: match.white.id,
+        black: match.black.id,
+        startTime: match.startTime,
+        endTime: match.endTime,
+        winner: match.winner,
+      };
     },
     closeDialog() {
       this.showAddMatchDialog = false;
@@ -161,8 +182,10 @@ export default {
         endTime: null,
         winner: null,
       };
+      this.selectedMatch = null;
+      this.$emit("dialog-closed");
     },
-    async submitNewMatch() {
+    async submitMatch() {
       const match = {
         white: this.newMatch.white,
         black: this.newMatch.black,
@@ -170,10 +193,13 @@ export default {
         endTime: this.newMatch.endTime,
         winner: this.newMatch.winner,
         tournamentId: this.tournamentId,
+        isUpdate: this.isUpdate,
+        matchId: this.matchId,
       };
-      await addMatchToTournament(match);
+
+      await addMatchToTournament(match, this.isUpdate);
       this.closeDialog();
-      this.$emit("match-added", match);
+      this.$emit("match-updated", match);
     },
     isEndTimeValid(value) {
       if (!value) {

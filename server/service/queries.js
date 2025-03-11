@@ -13,9 +13,9 @@ const SELECT_MATCH_BY_ID = `
     must.perenimi AS must_perenimi,
     must.klubi AS must_klubi,
     CASE
-      WHEN valge_tulemus = 2 THEN 'valge'
-      WHEN must_tulemus = 2 THEN 'must'
-      ELSE 'viik'
+      WHEN valge_tulemus = 2 THEN 'Valge'
+      WHEN must_tulemus = 2 THEN 'Must'
+      ELSE 'Viik'
     END AS voitja
 FROM
     partiid p

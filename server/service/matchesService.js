@@ -57,6 +57,7 @@ const getOngoingMatches = (req, res) => {
 const addMatchToTournament = (req, res) => {
     const {tournamentId, white, black, startTime, endTime, winner, isUpdate, matchId} = req.body
     const update = JSON.parse(isUpdate);
+    const id = isUpdate ? matchId : tournamentId
     console.log(`IN - Add match to tournament(id=${tournamentId}, update=${update}) request: ${JSON.stringify(req.body)}`);
 
     if (update && !matchId) {
@@ -66,11 +67,14 @@ const addMatchToTournament = (req, res) => {
         return
     }
 
-    const white_result = winner === "valge" ? 2 : winner === "must" ? 0 : 1;
-    const black_result = winner === "must" ? 2 : winner === "valge" ? 0 : 1;
+    const white_result = winner === "Valge" ? 2 : winner === "Must" ? 0 : 1;
+    const black_result = winner === "Must" ? 2 : winner === "Valge" ? 0 : 1;
 
     const query = getAddOrUpdateQuery(update)
-    pool.query(query, [tournamentId, white, black, startTime, endTime, white_result, black_result], (err, results) => {
+    console.log(white_result)
+    console.log(black_result)
+    console.log(query)
+    pool.query(query, [id, white, black, startTime, endTime, white_result, black_result], (err, results) => {
         if (err) {
             console.error(err)
             return res.status(500).send({

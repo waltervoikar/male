@@ -4,7 +4,7 @@ const cors = require('cors')
 const {getAllPlayers, getPlayerById, getPlayersByClubId, getPlayerStatistics, addPlayer, getTopPlayers} = require("./service/playersService");
 const {getAllClubs, getClubById, addClub, getTopClubs} = require("./service/clubsService");
 const {getAllTournaments, getTournamentById, addTournament, getOngoingTournaments} = require("./service/tournamentsService");
-const {getMatchByTournamentId, addMatchToTournament, getOngoingMatches} = require("./service/matchesService");
+const {getMatchByTournamentId, addMatchToTournament, getOngoingMatches, getMatchById} = require("./service/matchesService");
 const {getAllLocations} = require("./service/locationsService");
 
 
@@ -35,24 +35,11 @@ app.get("/api/tournaments/:id", getTournamentById)
 app.post("/api/tournaments", addTournament)
 
 app.get("/api/matches/ongoing", getOngoingMatches)
-app.get("/api/matches/:id", getMatchByTournamentId)
+app.get("/api/matches/:id", getMatchById)
+app.get("/api/matches/tournament/:id", getMatchByTournamentId)
 app.post("/api/matches", addMatchToTournament)
 
 app.get("/api/locations", getAllLocations)
 
-if (!process.env.CLOUD_URL) {
-  const fs = require('fs');
-  const https = require('https');
-
-  const sslOptions = {
-    key: fs.readFileSync(process.env.SSL_KEYFILE || '/etc/letsencrypt/live/hollak.duckdns.org/privkey.pem'),
-    cert: fs.readFileSync(process.env.SSL_CERTFILE || '/etc/letsencrypt/live/hollak.duckdns.org/fullchain.pem'),
-  };
-
-  https.createServer(sslOptions, app).listen(443, () => {
-    console.log('HTTPS Server running on port 443');
-  });
-} else {
-  app.listen(3000, () => {
-  });
-}
+app.listen(3000, () => {
+});

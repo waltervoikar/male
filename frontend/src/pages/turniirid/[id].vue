@@ -19,7 +19,7 @@
     <AddMatchDialog
       :tournamentId="tournamentId"
       v-model:showDialog="showAddMatchDialog"
-      @match-added:success="fetchTournament"
+      @match-updated:success="fetchTournament"
     />
   </v-container>
 </template>

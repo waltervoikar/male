@@ -3,7 +3,7 @@ import apiClient from "@/wrapper/axiosClient.js";
 
 export async function fetchMatchesByTournamentId(tournamentId) {
   try {
-    const response = await apiClient.get(`/matches/${tournamentId}`);
+    const response = await apiClient.get(`/matches/tournament/${tournamentId}`);
     return mapMatchesData(response.data);
   } catch (error) {
     console.error('Error fetching matches', error);
@@ -27,6 +27,15 @@ export async function fetchOngoingMatches() {
   }
 }
 
+export async function fetchMatchById(matchId) {
+  try {
+    const response = await apiClient.get(`/matches/${matchId}`);
+    return mapMatchData(response.data);
+  } catch (error) {
+    console.error('Error fetching match', error);
+  }
+}
+
 function mapMatchesData(matches) {
   return matches.map(match => {
     return mapMatchData(match)
@@ -42,7 +51,7 @@ function mapMatchData(match) {
       club: match.valge_klubi
     },
     black: {
-      id: match.musti_id,
+      id: match.must_id,
       fullName: match.must_perenimi + ", " + match.must_eesnimi,
       club: match.must_klubi
     },
