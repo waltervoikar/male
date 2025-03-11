@@ -1,5 +1,4 @@
 <template>
-  <v-container fluid class="mt-4">
     <v-data-table
       :headers="headers"
       :items="players"
@@ -70,7 +69,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-container>
 </template>
 
 <script>

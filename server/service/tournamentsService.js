@@ -51,10 +51,8 @@ const getTournamentById = (req, res) => {
 }
 
 const addTournament = (req, res) => {
-  console.log("IN - Add tournament request")
-
   const { name, location, startDate, endDate } = req.body
-  console.log(`Add tournament: ${name}, ${location}, ${startDate}, ${endDate}`)
+  console.log(`IN - Add tournament request tournament=(name=${name}, location=${location}, start=${startDate}, end=${endDate})`)
 
   pool.query(INSERT_TOURNAMENT, [name, location, startDate, endDate], (err, results) => {
     if (err) {

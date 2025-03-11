@@ -17,10 +17,10 @@
           <v-col cols="12" md="6" lg="4" v-for="match in ongoingMatches" :key="match.id">
             <v-card class="mb-2">
               <v-card-title class="tournament-title">{{ match.tournament }}</v-card-title>
-              <v-card-subtitle class="player-names d-flex align-end">
-                <img :src="whitePawn" alt="Black Pawn" class="pawn-icon mr-2" />{{ match.player1 }} -
-                {{ match.player2 }}<img :src="blackPawn" alt="White Pawn" class="pawn-icon ml-2" />
-              </v-card-subtitle>
+              <v-card-text class="player-names d-flex align-end">
+                <img :src="whitePawn" alt="Black Pawn" class="pawn-icon mr-2" />{{ match.black.fullName }} -
+                {{ match.white.fullName }}<img :src="blackPawn" alt="White Pawn" class="pawn-icon ml-2" />
+              </v-card-text>
             </v-card>
           </v-col>
         </v-row>

@@ -2,7 +2,6 @@
   <v-container>
     <div v-if="club">
       <h1 class="club-title">{{ club.name }}</h1>
-      <!-- Tournament Info Boxes -->
       <v-row dense>
         <v-col cols="12" md="6" lg="4">
           <v-card outlined>
@@ -32,8 +31,17 @@
         </v-col>
       </v-row>
 
-      <h2 class="players-section">Mängijad:</h2>
-      <PlayersSearchTable :club-id="clubId" />
+      <v-row cols="12">
+        <v-col>
+          <v-divider :thickness="3"></v-divider>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col>
+          <PlayersSearchTable :club-id="clubId" />
+        </v-col>
+      </v-row>
 
     </div>
     <div v-else>
@@ -86,8 +94,4 @@ export default {
   font-weight: bold;
 }
 
-.players-section {
-  margin-top: 3rem;
-  margin-bottom: 1.5rem;
-}
 </style>

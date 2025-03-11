@@ -57,6 +57,7 @@ function mapMatchData(match) {
     },
     startTime: formatTimestamp(match.algushetk),
     endTime: formatTimestamp(match.lopphetk),
-    winner: match.voitja
+    winner: match.voitja,
+    tournament: match.turniir,
   }
 }

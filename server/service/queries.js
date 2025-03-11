@@ -61,8 +61,41 @@ function getAddOrUpdateQuery(isUpdate) {
 }
 
 const SELECT_ONGOING_MATCHES = `
-    SELECT * FROM partiid p
-    WHERE lopphetk IS NULL
+    SELECT
+    p.id,
+    t.nimi AS turniir,
+    p.algushetk,
+    valge.eesnimi AS valge_eesnimi,
+    valge.perenimi AS valge_perenimi,
+    valge.klubi AS valge_klubi,
+    must.eesnimi AS must_eesnimi,
+    must.perenimi AS must_perenimi,
+    must.klubi AS must_klubi
+    FROM partiid p
+    LEFT JOIN (
+    SELECT
+        i.id,
+        i.eesnimi,
+        i.perenimi,
+        k.nimi AS klubi
+    FROM
+        isikud i
+    LEFT JOIN
+        klubid k ON i.klubis = k.id
+    ) valge ON valge.id = p.valge
+    LEFT JOIN (
+        SELECT
+            i.id,
+            i.eesnimi,
+            i.perenimi,
+            k.nimi AS klubi
+        FROM
+            isikud i
+        LEFT JOIN
+            klubid k ON i.klubis = k.id
+    ) must ON must.id = p.must
+    LEFT JOIN turniirid t ON p.turniir = t.id
+    WHERE p.lopphetk IS NULL
 `;
 
 const SELECT_ALL_LOCATIONS = `
