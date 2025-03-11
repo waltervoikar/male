@@ -35,7 +35,7 @@
     </v-row>
     <v-row>
       <v-col>
-        <v-btn color="primary" @click="openAddMatchDialog">Muuda turniiri</v-btn>
+        <v-btn color="primary" @click="openModifyTournamentDialog">Muuda turniiri</v-btn>
       </v-col>
     </v-row>
     <v-row cols="12">
@@ -58,6 +58,12 @@
       v-model:showDialog="showAddMatchDialog"
       @match-updated:success="fetchTournament"
     />
+    <AddTournamentDialog v-if="showModifyTournamentDialog"
+      v-model:showDialog="showModifyTournamentDialog"
+      :is-update="true"
+      :tournament-id="tournamentId"
+      @dialog-closed="closeModifyTournamentDialog"
+    />
   </v-container>
 </template>
 
@@ -65,15 +71,17 @@
 import MatchesSearch from "@/components/tournaments/MatchesSearch.vue";
 import AddMatchDialog from "@/components/tournaments/AddMatchDialog.vue";
 import { fetchTournamentById } from "@/wrapper/tournamentsApiWrapper.js";
+import AddTournamentDialog from "@/components/tournaments/AddTournamentDialog.vue";
 
 export default {
   name: "Tournament",
-  components: { MatchesSearch, AddMatchDialog },
+  components: {AddTournamentDialog, MatchesSearch, AddMatchDialog },
   data() {
     return {
       tournamentId: null,
       tournament: null,
       showAddMatchDialog: false,
+      showModifyTournamentDialog: false,
     };
   },
   created() {
@@ -91,6 +99,12 @@ export default {
     openAddMatchDialog() {
       this.showAddMatchDialog = true;
     },
+    openModifyTournamentDialog() {
+      this.showModifyTournamentDialog = true;
+    },
+    closeModifyTournamentDialog() {
+      this.showDialog = false
+    }
   },
 };
 </script>

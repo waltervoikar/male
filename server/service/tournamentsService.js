@@ -1,5 +1,7 @@
 const { pool } = require("../database")
-const {SELECT_ALL_TOURNAMENTS, SELECT_ONGOING_TOURNAMENTS, SELECT_TOURNAMENT_BY_ID, INSERT_TOURNAMENT} = require("./queries");
+const {SELECT_ALL_TOURNAMENTS, SELECT_ONGOING_TOURNAMENTS, SELECT_TOURNAMENT_BY_ID, INSERT_TOURNAMENT,
+  getAddOrUpdateTournamentQuery
+} = require("./queries");
 
 const getAllTournaments = (req, res) => {
   console.log("IN - Get all tournaments request")
@@ -51,10 +53,16 @@ const getTournamentById = (req, res) => {
 }
 
 const addTournament = (req, res) => {
-  const { name, location, startDate, endDate } = req.body
-  console.log(`IN - Add tournament request tournament=(name=${name}, location=${location}, start=${startDate}, end=${endDate})`)
+  const { name, location, startDate, endDate, isUpdate, tournamentId } = req.body
+  const update = JSON.parse(isUpdate);
+  console.log(`IN - Add tournament request tournament=(name=${name}, location=${location}, start=${startDate}, end=${endDate}, update=${update})`)
 
-  pool.query(INSERT_TOURNAMENT, [name, location, startDate, endDate], (err, results) => {
+  const query = getAddOrUpdateTournamentQuery(update)
+  let values = [name, location, startDate, endDate]
+  if (update) {
+    values.push(tournamentId)
+  }
+  pool.query(query, values, (err, results) => {
     if (err) {
       console.error(err)
       return res.status(500).send({

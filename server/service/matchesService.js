@@ -1,5 +1,5 @@
 const {pool} = require("../database")
-const {SELECT_MATCH_BY_ID, getAddOrUpdateQuery, SELECT_ONGOING_MATCHES} = require("./queries");
+const {SELECT_MATCH_BY_ID, getAddOrUpdateQuery, SELECT_ONGOING_MATCHES, getAddOrUpdateMatchQuery} = require("./queries");
 
 const getMatchByTournamentId = (req, res) => {
     const id = parseInt(req.params.id)
@@ -70,7 +70,7 @@ const addMatchToTournament = (req, res) => {
     const white_result = winner === "Valge" ? 2 : winner === "Must" ? 0 : 1;
     const black_result = winner === "Must" ? 2 : winner === "Valge" ? 0 : 1;
 
-    const query = getAddOrUpdateQuery(update)
+    const query = getAddOrUpdateMatchQuery(update)
     console.log(white_result)
     console.log(black_result)
     console.log(query)

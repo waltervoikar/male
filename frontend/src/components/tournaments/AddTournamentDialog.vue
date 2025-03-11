@@ -2,7 +2,7 @@
   <v-dialog v-model="showAddTournamentDialog" max-width="500">
     <v-card>
       <v-card-title>
-        <span class="headline">Lisa turniir</span>
+        <span class="headline">{{ isUpdate ? 'Muuda turniiri andmeid' : 'Lisa turniir' }}</span>
       </v-card-title>
       <v-card-text>
         <v-container>
@@ -50,10 +50,10 @@
         <v-btn
           variant="elevated"
           color="primary"
-          @click="submitNewMatch"
+          @click="submitNewTournament"
           :disabled="!isFormValid"
         >
-          Salvesta
+          {{ isUpdate ? 'Uuenda' : 'Salvesta' }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import {addTournament} from "@/wrapper/tournamentsApiWrapper.js";
+import {addTournament, fetchTournamentById} from "@/wrapper/tournamentsApiWrapper.js";
 import {fetchAllLocations} from "@/wrapper/locationsApiWrapper.js";
 
 export default {
@@ -71,6 +71,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    isUpdate: {
+      type: Boolean,
+      default: false,
+    },
+    tournamentId: {
+      type: String,
+      required: true,
+    }
   },
   data() {
     return {
@@ -106,10 +114,16 @@ export default {
   },
   created() {
     this.loadLocationsCache();
+    if (this.isUpdate && this.tournamentId) {
+      this.loadTournamentData();
+    }
   },
   methods: {
     async loadLocationsCache() {
       this.locationCache = await fetchAllLocations();
+    },
+    async loadTournamentData() {
+      this.newTournament = await fetchTournamentById(this.tournamentId)
     },
     closeDialog() {
       this.showAddTournamentDialog = false;
@@ -122,13 +136,16 @@ export default {
         startDate: null,
         endDate: null,
       };
+      this.$emit("dialog-closed");
     },
-    async submitNewMatch() {
+    async submitNewTournament() {
       const tournament = {
         name: this.newTournament.name,
         location: this.newTournament.location,
         startDate: this.newTournament.startDate,
         endDate: this.newTournament.endDate,
+        isUpdate: this.isUpdate,
+        tournamentId: this.tournamentId,
       };
       await addTournament(tournament);
       this.closeDialog();

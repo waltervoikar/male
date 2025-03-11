@@ -43,7 +43,7 @@ LEFT JOIN (
 ) must ON must.id = p.must
 `;
 
-function getAddOrUpdateQuery(isUpdate) {
+function getAddOrUpdateMatchQuery(isUpdate) {
     let query;
     if (isUpdate) {
         query = `
@@ -192,9 +192,33 @@ const SELECT_TOURNAMENT_BY_ID = `
 
 const INSERT_TOURNAMENT = `
   INSERT INTO turniirid (nimi, asula, alguskuupaev, loppkuupaev)
-  VALUES ($1, $2, $3, $4)
-  RETURNING id
+  VALUES ($1,
+      (SELECT id FROM asulad WHERE nimi = $2),
+      $3,
+      $4)
 `;
+
+function getAddOrUpdateTournamentQuery(isUpdate) {
+    if (isUpdate) {
+        return `
+        UPDATE turniirid
+        SET (nimi, asula, alguskuupaev, loppkuupaev) =
+            ($1,
+            (SELECT id FROM asulad WHERE nimi = $2),
+            $3,
+            $4)
+        WHERE id = ($5)
+        `
+    } else {
+        return `
+          INSERT INTO turniirid (nimi, asula, alguskuupaev, loppkuupaev)
+          VALUES ($1,
+                 (SELECT id FROM asulad WHERE nimi = $2),
+                 $3,
+                 $4)
+        `
+    }
+}
 
 const SELECT_ALL_CLUBS = `
     SELECT k.*, COUNT(i.id) as members, ROUND(AVG(i.ranking), 1) as average_rating
@@ -230,7 +254,7 @@ const INSERT_CLUB = `
 
 module.exports = {
     SELECT_MATCH_BY_ID,
-    getAddOrUpdateQuery,
+    getAddOrUpdateMatchQuery,
     SELECT_ONGOING_MATCHES,
     SELECT_ALL_LOCATIONS,
     SELECT_ALL_PLAYERS,
@@ -242,7 +266,7 @@ module.exports = {
     SELECT_ALL_TOURNAMENTS,
     SELECT_ONGOING_TOURNAMENTS,
     SELECT_TOURNAMENT_BY_ID,
-    INSERT_TOURNAMENT,
+    getAddOrUpdateTournamentQuery,
     SELECT_ALL_CLUBS,
     SELECT_CLUB_BY_ID,
     SELECT_TOP_CLUBS,
