@@ -108,7 +108,7 @@ const SELECT_ALL_PLAYERS = `
 `;
 
 const SELECT_PLAYER_BY_ID = `
-      SELECT i.id, i.eesnimi, i.perenimi, k.nimi AS klubi, i.synniaeg, i.sugu, i.ranking FROM isikud i
+      SELECT i.id, i.eesnimi, i.perenimi, k.nimi AS klubi, i.synniaeg, i.sugu, i.ranking, i.isikukood FROM isikud i
         LEFT JOIN klubid k ON i.klubis = k.id
         WHERE i.id = $1
 `;
@@ -167,10 +167,31 @@ const SELECT_TOP_PLAYERS = `
         LIMIT $1
 `;
 
-const INSERT_PLAYER = `
+function getAddOrUpdatePlayerQuery(isUpdate) {
+    if (isUpdate) {
+        return `
+        UPDATE isikud
+        SET (eesnimi, perenimi, klubis, synniaeg, sugu, ranking) = 
+        ($1,
+            $2,
+            (SELECT id FROM klubid WHERE nimi = $3),
+            $4,
+            $5,
+            $6)
+        WHERE id = $7
+        `
+    } else {
+        return `
         INSERT INTO isikud (eesnimi, perenimi, klubis, synniaeg, sugu, ranking)
-        VALUES ($1, $2, $3, $4, $5, $6)
-`;
+        VALUES ($1,
+            $2,
+            (SELECT id FROM klubid WHERE nimi = $3),
+            $4,
+            $5,
+            $6)
+        `
+    }
+}
 
 const SELECT_ALL_TOURNAMENTS = `
   SELECT t.id, t.nimi, t.alguskuupaev, t.loppkuupaev, a.nimi AS toimumiskoht FROM turniirid t
@@ -264,7 +285,7 @@ module.exports = {
     SELECT_ALL_PLAYERS_IN_CLUB,
     SELECT_PLAYER_STATISTICS,
     SELECT_TOP_PLAYERS,
-    INSERT_PLAYER,
+    getAddOrUpdatePlayerQuery,
     SELECT_ALL_TOURNAMENTS,
     SELECT_ONGOING_TOURNAMENTS,
     SELECT_TOURNAMENT_BY_ID,

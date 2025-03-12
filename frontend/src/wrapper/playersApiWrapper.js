@@ -67,7 +67,10 @@ function mapPlayerData(player) {
     club: player.klubi == null ? '-' : player.klubi,
     dateOfBirth: formatDate(player.synniaeg),
     gender: player.sugu.toUpperCase(),
-    ranking: player.ranking
+    ranking: player.ranking,
+    firstName: player.eesnimi,
+    lastName: player.perenimi,
+    idCode: player.isikukood,
   }
 }
 

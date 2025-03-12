@@ -1,6 +1,6 @@
 const {pool} = require("../database")
 const {SELECT_ALL_PLAYERS, SELECT_PLAYER_BY_ID, SELECT_ALL_PLAYERS_IN_CLUB, SELECT_PLAYER_STATISTICS,
-    SELECT_TOP_PLAYERS, INSERT_PLAYER
+    SELECT_TOP_PLAYERS, INSERT_PLAYER, getAddOrUpdatePlayerQuery
 } = require("./queries");
 
 const getAllPlayers = (req, res) => {
@@ -92,10 +92,16 @@ const getTopPlayers = (req, res) => {
 }
 
 const addPlayer = (req, res) => {
-    const {firstName, lastName, club, dateOfBirth, gender, ranking} = req.body
-    console.log(`IN - Add player(${firstName} ${lastName}) request`)
+    const {firstName, lastName, club, dateOfBirth, gender, ranking, isUpdate, playerId} = req.body
+    const update = JSON.parse(isUpdate)
+    console.log(`IN - Add player(first=${firstName}, last=${lastName}, update=${update}) request`)
 
-    pool.query(INSERT_PLAYER, [firstName, lastName, club, dateOfBirth, gender, ranking], (err, results) => {
+    const query = getAddOrUpdatePlayerQuery(isUpdate)
+    let values = [firstName, lastName, club, dateOfBirth, gender, ranking]
+    if (update) {
+        values.push(playerId)
+    }
+    pool.query(query, values, (err, results) => {
         if (err) {
             console.error(err)
             return res.status(500).send({
@@ -106,7 +112,7 @@ const addPlayer = (req, res) => {
 
         console.log(`OUT - Add player(${firstName} ${lastName}) result: success`)
         res.status(201).send(`Player added with ID: ${results.insertId}`)
-    })
+    });
 }
 
 module.exports = { getAllPlayers, getPlayerById, getPlayersByClubId, getPlayerStatistics, addPlayer, getTopPlayers }

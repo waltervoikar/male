@@ -81,15 +81,23 @@
 
 <script>
 import {fetchAllClubs} from "@/wrapper/clubsApiWrapper.js";
-import {addPlayer} from "@/wrapper/playersApiWrapper.js";
+import {addPlayer, fetchPlayerById} from "@/wrapper/playersApiWrapper.js";
 
 export default {
-  name: "AddClubDialog",
+  name: "AddPlayerDialog",
   props: {
     showDialog: {
       type: Boolean,
       default: false,
     },
+    isUpdate: {
+      type: Boolean,
+      default: false,
+    },
+    playerId: {
+      type: Number,
+      default: null,
+    }
   },
   data() {
     return {
@@ -127,10 +135,18 @@ export default {
   },
   created() {
     this.loadLocationsCache();
+    if (this.isUpdate && this.playerId) {
+      this.loadPlayerDataForUpdate()
+    }
   },
   methods: {
     async loadLocationsCache() {
       this.clubCache = await fetchAllClubs();
+    },
+
+    async loadPlayerDataForUpdate() {
+      this.newPlayer = await fetchPlayerById(this.playerId)
+      this.newPlayer.gender = this.resolveGenderForUpdate(this.newPlayer.gender)
     },
 
     closeDialog() {
@@ -154,10 +170,12 @@ export default {
         dateOfBirth: this.newPlayer.dateOfBirth,
         gender: this.resolveGender(),
         ranking: this.newPlayer.ranking,
+        isUpdate: this.isUpdate,
+        playerId: this.playerId,
       };
       await addPlayer(player);
       this.closeDialog();
-      this.$emit("player-added", player);
+      this.$emit("player-updated");
     },
 
     filterClubs(itemTitle, queryText, item) {
@@ -170,7 +188,17 @@ export default {
       switch (this.newPlayer.gender) {
         case 'Mees': return 'm';
         case 'Naine': return 'n';
-        default: return 'o'
+        default: return 'o';
+      }
+    },
+    resolveGenderForUpdate() {
+      switch (this.newPlayer.gender) {
+        case 'M':
+          return 'Mees';
+        case 'N':
+          return 'Naine';
+        default:
+          return 'Muu';
       }
     },
 

@@ -8,6 +8,11 @@
         </v-col>
       </v-row>
     </v-row>
+    <v-row v-if="player">
+      <v-col>
+        <v-btn color="primary" @click="openModifyPlayerDialog">Muuda mängijat</v-btn>
+      </v-col>
+    </v-row>
   </v-container>
   <PlayerStatistics v-if="player" :player-id="player.id"/>
   <v-container v-else>
@@ -19,19 +24,28 @@
       Tagasi mängijate lehele
     </v-btn>
   </v-container>
+  <AddPlayerDialog v-if="showModifyPlayerDialog"
+                   :showDialog="showModifyPlayerDialog"
+                   :is-update="true"
+                   :player-id="player.id"
+                   @update:showDialog="closeModifyPlayerDialog"
+                   @player-updated="updatePlayer"
+  />
 </template>
 
 <script>
 import {fetchPlayerById} from "@/wrapper/playersApiWrapper.js";
 import PlayerStatistics from "@/components/players/PlayerStatistics.vue";
+import AddPlayerDialog from "@/components/players/AddPlayerDialog.vue";
 
 export default {
   name: "PlayerInfo",
-  components: {PlayerStatistics},
+  components: {PlayerStatistics, AddPlayerDialog},
   data() {
     return {
       player: null,
       playerId: null,
+      showModifyPlayerDialog: false,
     }
   },
 
@@ -47,6 +61,18 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+
+    openModifyPlayerDialog() {
+      this.showModifyPlayerDialog = true;
+    },
+
+    closeModifyPlayerDialog() {
+      this.showModifyPlayerDialog = false;
+    },
+
+    updatePlayer() {
+      this.player = this.fetchPlayerData()
     },
   },
 
