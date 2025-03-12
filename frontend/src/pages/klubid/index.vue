@@ -1,7 +1,14 @@
 <template>
   <v-container fluid class="mt-4">
+    <v-row>
+      <v-col>
+        <h1>Klubid</h1>
+      </v-col>
+    </v-row>
+  </v-container>
+  <v-container fluid class="mt-4">
     <v-row class="mb-4">
-      <v-col cols="12" sm="4">
+      <v-col cols="12" sm="3">
         <v-text-field
           v-model="searchName"
           label="Otsi nime järgi"
@@ -9,7 +16,7 @@
         />
       </v-col>
 
-      <v-col cols="12" sm="4">
+      <v-col cols="12" sm="1">
         <v-select
           v-model="resultsPerPage"
           :items="[10, 20, 50]"
@@ -18,20 +25,19 @@
         />
       </v-col>
 
-      <v-col cols="12" sm="4">
+      <v-col cols="12" sm="2">
         <v-select
           v-model="sortBy"
           :items="['Reiting', 'Nimi', 'Liikmete arv']"
           label="Järjesta"
         />
       </v-col>
-    </v-row>
 
-    <v-row class="mb-4">
-      <v-col>
-        <v-btn color="primary" @click="openAddClubDialog">Lisa klubi</v-btn>
+      <v-col cols="12" sm="6" class="d-flex justify-end">
+        <v-btn color="primary" @click="openAddClubDialog">Lisa uus klubi</v-btn>
       </v-col>
     </v-row>
+
 
     <v-row>
       <v-col
@@ -58,16 +64,11 @@
     </v-row>
 
     <v-row>
-      <v-col cols="6">
+      <v-col cols="12">
         <v-pagination
           v-model="page"
           :length="pageCount"
         />
-      </v-col>
-
-      <v-col cols="6" class="text-right">
-        Näitan tulemusi {{ startIndex }}–{{ endIndex }}
-        (kokku {{ totalClubs }})
       </v-col>
     </v-row>
     <AddClubDialog
@@ -123,16 +124,6 @@ export default {
     },
     pageCount() {
       return Math.ceil(this.totalFiltered / this.resultsPerPage)
-    },
-    totalClubs() {
-      return this.totalFiltered
-    },
-    startIndex() {
-      return (this.page - 1) * this.resultsPerPage + 1
-    },
-    endIndex() {
-      const end = this.page * this.resultsPerPage
-      return end > this.totalFiltered ? this.totalFiltered : end
     },
   },
   created() {

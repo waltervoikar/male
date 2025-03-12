@@ -48,7 +48,7 @@
                 :custom-filter="filterClubs"
                 label="Klubi"
                 item-title="name"
-                item-value="id"
+                item-value="name"
                 variant="outlined"
                 hide-no-data
                 clearable

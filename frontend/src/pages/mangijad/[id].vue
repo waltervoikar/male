@@ -1,16 +1,17 @@
 <template>
   <v-container>
     <v-row v-if="player">
-      <v-row class="mb-4">
-        <v-col>
-          <h1 class="mb-2">{{ player.name }}</h1>
-          <h3>Klubi: {{ player.club }}</h3>
-        </v-col>
-      </v-row>
+      <v-col>
+        <h1 class="mb-2">Mängijad / {{ player.name }}</h1>
+      </v-col>
     </v-row>
     <v-row v-if="player">
       <v-col>
-        <v-btn color="primary" @click="openModifyPlayerDialog">Muuda mängijat</v-btn>
+        <ModifyPlayerForm
+          :is-update="true"
+          :player-id="player.id"
+          @player-updated="updatePlayer"
+        />
       </v-col>
     </v-row>
   </v-container>
@@ -24,23 +25,25 @@
       Tagasi mängijate lehele
     </v-btn>
   </v-container>
-  <AddPlayerDialog v-if="showModifyPlayerDialog"
-                   :showDialog="showModifyPlayerDialog"
-                   :is-update="true"
-                   :player-id="player.id"
-                   @update:showDialog="updateShowModifyPlayerDialog"
-                   @player-updated="updatePlayer"
-  />
+<!--  <AddPlayerDialog v-if="showModifyPlayerDialog"-->
+<!--                   :showDialog="showModifyPlayerDialog"-->
+<!--                   :is-update="true"-->
+<!--                   :player-id="player.id"-->
+<!--                   @update:showDialog="updateShowModifyPlayerDialog"-->
+<!--                   @player-updated="updatePlayer"-->
+<!--  />-->
+
 </template>
 
 <script>
 import {fetchPlayerById} from "@/wrapper/playersApiWrapper.js";
 import PlayerStatistics from "@/components/players/PlayerStatistics.vue";
 import AddPlayerDialog from "@/components/players/AddPlayerDialog.vue";
+import ModifyPlayerForm from "@/components/players/ModifyPlayerForm.vue";
 
 export default {
   name: "PlayerInfo",
-  components: {PlayerStatistics, AddPlayerDialog},
+  components: {ModifyPlayerForm, PlayerStatistics, AddPlayerDialog},
   data() {
     return {
       player: null,

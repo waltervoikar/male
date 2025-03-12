@@ -1,79 +1,76 @@
 <template>
-  <v-container fluid class="mt-4">
-    <v-row class="mb-4">
-      <v-col cols="12" sm="4">
-        <v-text-field
-          v-model="searchName"
-          label="Otsi nime järgi"
-          clearable
-        />
-      </v-col>
+  <v-container>
 
-      <v-col cols="12" sm="4">
-        <v-select
-          v-model="resultsPerPage"
-          :items="[5, 10, 20, 50]"
-          label="Tulemusi lehel"
-          :menu-props="{ maxHeight: 200 }"
-        />
-      </v-col>
+      <v-row>
+        <v-col>
+          <h1>Mängijad</h1>
+        </v-col>
+      </v-row>
+      <v-row class="mb-4">
+        <v-col cols="12" sm="3">
+          <v-text-field
+            v-model="searchName"
+            label="Otsi nime järgi"
+            clearable
+          />
+        </v-col>
 
-      <v-col cols="12" sm="4">
-        <v-select
-          v-model="sortBy"
-          :items="['Reiting', 'Nimi']"
-          label="Järjesta"
-        />
-      </v-col>
-    </v-row>
+        <v-col cols="12" sm="1">
+          <v-select
+            v-model="resultsPerPage"
+            :items="[5, 10, 20, 50]"
+            label="Tulemusi lehel"
+            :menu-props="{ maxHeight: 200 }"
+          />
+        </v-col>
 
-    <v-row class="mb-4">
-      <v-col>
-        <v-btn color="primary" @click="openAddPlayerDialog">Lisa mängija</v-btn>
-      </v-col>
-    </v-row>
+        <v-col cols="12" sm="2">
+          <v-select
+            v-model="sortBy"
+            :items="['Reiting', 'Nimi']"
+            label="Järjesta"
+          />
+        </v-col>
 
-    <v-row>
-      <v-col cols="12">
-        <v-card
-          v-for="player in filteredPlayers"
-          :key="player.id"
-          class="mb-4"
-          outlined
-          hover
-          @click="goToPlayerDetails(player.id)"
-        >
-          <v-card-title>{{ player.name }}</v-card-title>
-          <v-card-subtitle>
-            {{ player.club }}
-          </v-card-subtitle>
-          <v-card-text>
-            <strong>Reiting:</strong> {{ player.ranking }}
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+        <v-col cols="12" sm="6" class="d-flex justify-end">
+          <v-btn color="primary" @click="openAddPlayerDialog">Lisa uus mängija</v-btn>
+        </v-col>
+      </v-row>
 
-    <v-row>
-      <v-col cols="6">
-        <v-pagination
-          v-model="page"
-          :length="pageCount"
-        />
-      </v-col>
+      <v-row>
+        <v-col cols="12">
+          <v-card
+            v-for="player in filteredPlayers"
+            :key="player.id"
+            class="mb-4"
+            outlined
+            hover
+            @click="goToPlayerDetails(player.id)"
+          >
+            <v-card-title>{{ player.name }}</v-card-title>
+            <v-card-subtitle>
+              {{ player.club }}
+            </v-card-subtitle>
+            <v-card-text>
+              <strong>Reiting:</strong> {{ player.ranking }}
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
 
-      <v-col cols="6" class="text-right">
-        <span>
-          Näitan tulemusi {{ startIndex }}–{{ endIndex }}
-          (kokku {{ totalFiltered }})
-        </span>
-      </v-col>
-    </v-row>
-    <AddPlayerDialog
-      :showDialog="showAddPlayerDialog"
-      @player-added="fetchAllPlayersData"
-    />
-  </v-container>
+      <v-row>
+        <v-col cols="12">
+          <v-pagination
+            v-model="page"
+            :length="pageCount"
+          />
+        </v-col>
+      </v-row>
+      <AddPlayerDialog
+        :showDialog="showAddPlayerDialog"
+        @player-added="fetchAllPlayersData"
+      />
+    </v-container>
 </template>
 
 <script>
@@ -81,7 +78,7 @@ import {fetchAllPlayers} from "@/wrapper/playersApiWrapper.js";
 import AddPlayerDialog from "@/components/players/AddPlayerDialog.vue";
 
 export default {
-  components: { AddPlayerDialog },
+  components: {AddPlayerDialog},
   data() {
     return {
       players: [],
@@ -141,13 +138,6 @@ export default {
     },
     pageCount() {
       return Math.ceil(this.totalFiltered / this.resultsPerPage)
-    },
-    startIndex() {
-      return (this.page - 1) * this.resultsPerPage + 1
-    },
-    endIndex() {
-      const end = this.page * this.resultsPerPage
-      return end > this.totalFiltered ? this.totalFiltered : end
     },
   },
 
