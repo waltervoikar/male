@@ -124,7 +124,7 @@ export default {
       };
       await addClub(club);
       this.closeDialog();
-      this.$emit("club-added", club);
+      this.$emit("club-updated", club);
     },
     filterLocations(itemTitle, queryText, item) {
       const name = item.raw.name.toLowerCase();

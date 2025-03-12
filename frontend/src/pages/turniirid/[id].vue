@@ -62,7 +62,8 @@
                          v-model:showDialog="showModifyTournamentDialog"
                          :is-update="true"
                          :tournament-id="tournamentId"
-                         @dialog-closed="closeModifyTournamentDialog"
+                         @update:showDialog="updateShowModifyTournamentDialog"
+                         @tournament-updated="fetchTournament"
     />
   </v-container>
 </template>
@@ -102,8 +103,8 @@ export default {
     openModifyTournamentDialog() {
       this.showModifyTournamentDialog = true;
     },
-    closeModifyTournamentDialog() {
-      this.showDialog = false
+    updateShowModifyTournamentDialog(value) {
+      this.showDialog = value
     }
   },
 };

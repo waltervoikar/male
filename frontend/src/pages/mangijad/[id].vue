@@ -28,7 +28,7 @@
                    :showDialog="showModifyPlayerDialog"
                    :is-update="true"
                    :player-id="player.id"
-                   @update:showDialog="closeModifyPlayerDialog"
+                   @update:showDialog="updateShowModifyPlayerDialog"
                    @player-updated="updatePlayer"
   />
 </template>
@@ -67,8 +67,8 @@ export default {
       this.showModifyPlayerDialog = true;
     },
 
-    closeModifyPlayerDialog() {
-      this.showModifyPlayerDialog = false;
+    updateShowModifyPlayerDialog(value) {
+      this.showModifyPlayerDialog = value;
     },
 
     updatePlayer() {

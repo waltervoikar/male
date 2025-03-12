@@ -217,7 +217,7 @@ function getAddOrUpdateTournamentQuery(isUpdate) {
         UPDATE turniirid
         SET (nimi, asula, alguskuupaev, loppkuupaev) =
             ($1,
-            (SELECT id FROM asulad WHERE nimi = $2),
+            $2,
             $3,
             $4)
         WHERE id = ($5)
@@ -226,7 +226,7 @@ function getAddOrUpdateTournamentQuery(isUpdate) {
         return `
           INSERT INTO turniirid (nimi, asula, alguskuupaev, loppkuupaev)
           VALUES ($1,
-                 (SELECT id FROM asulad WHERE nimi = $2),
+                 $2,
                  $3,
                  $4)
         `

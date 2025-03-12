@@ -62,6 +62,8 @@
                    v-model:show-dialog="showModifyClubDialog"
                    :is-update="true"
                    :club-id="clubId"
+                   @club-updated="fetchClubData"
+                   @update:showDialog="updateShowModifyDialog"
     />
   </v-container>
 </template>
@@ -98,6 +100,9 @@ export default {
     },
     openModifyClubDialog() {
       this.showModifyClubDialog = true;
+    },
+    updateShowModifyDialog(value) {
+      this.showModifyClubDialog = value;
     },
   }
 

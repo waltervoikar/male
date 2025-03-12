@@ -136,7 +136,6 @@ export default {
         startDate: null,
         endDate: null,
       };
-      this.$emit("dialog-closed");
     },
     async submitNewTournament() {
       const tournament = {
@@ -149,7 +148,7 @@ export default {
       };
       await addTournament(tournament);
       this.closeDialog();
-      this.$emit("tournament-added", tournament);
+      this.$emit("tournament-updated", tournament);
     },
     isEndTimeValid(value) {
       if (!value) {
