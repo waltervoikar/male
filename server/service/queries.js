@@ -263,13 +263,17 @@ function getAddOrUpdateClubQuery(isUpdate) {
     if (isUpdate) {
         return `
         UPDATE klubid
-        SET (nimi, asula) = ($1, $2)
+        SET (nimi, asula) = 
+            ($1,
+            (SELECT id FROM asulad WHERE nimi = $2))
         WHERE id = $3
         `
     } else {
         return `
             INSERT INTO klubid (nimi, asula)
-            VALUES ($1, $2)
+            VALUES             
+                ($1,
+                (SELECT id FROM asulad WHERE nimi = $2))
             RETURNING id
         `
     }

@@ -20,7 +20,7 @@
                 :custom-filter="filterLocations"
                 label="Asukoht*"
                 item-title="name"
-                item-value="id"
+                item-value="name"
                 variant="outlined"
                 hide-no-data
                 clearable
