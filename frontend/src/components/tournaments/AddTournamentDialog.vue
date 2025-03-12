@@ -20,7 +20,7 @@
                 :custom-filter="filterLocations"
                 label="Toimumiskoht*"
                 item-title="name"
-                item-value="id"
+                item-value="name"
                 variant="outlined"
                 hide-no-data
                 clearable
@@ -123,7 +123,14 @@ export default {
       this.locationCache = await fetchAllLocations();
     },
     async loadTournamentData() {
-      this.newTournament = await fetchTournamentById(this.tournamentId)
+      const tournament = await fetchTournamentById(this.tournamentId)
+
+      this.newTournament = {
+        name: tournament.name,
+        location: tournament.location,
+        startDate: new Date(tournament.startDate).toISOString().split('T')[0],
+        endDate: new Date(tournament.endDate).toISOString().split('T')[0],
+      }
     },
     closeDialog() {
       this.showAddTournamentDialog = false;

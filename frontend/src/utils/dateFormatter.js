@@ -1,8 +1,11 @@
-export function formatDate(date) {
-  if (date === null) {
-    return "-"
-  }
-  return new Date(date).toISOString().split('T')[0];
+export function formatDate(dateString, timeZone = 'Europe/Tallinn') {
+  const date = new Date(dateString); // Convert to Date object
+  return new Intl.DateTimeFormat('sv-SE', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(date);
 }
 
 // ChatGPT

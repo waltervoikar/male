@@ -55,11 +55,10 @@ const getTournamentById = (req, res) => {
 const addTournament = (req, res) => {
   const { name, location, startDate, endDate, isUpdate, tournamentId } = req.body
   const update = JSON.parse(isUpdate);
-  const locationId = parseInt(location)
   console.log(`IN - Add tournament request tournament=(name=${name}, location=${location}, start=${startDate}, end=${endDate}, update=${update})`)
 
   const query = getAddOrUpdateTournamentQuery(update)
-  let values = [name, locationId, startDate, endDate]
+  let values = [name, location, startDate, endDate]
   if (update) {
     values.push(tournamentId)
   }
