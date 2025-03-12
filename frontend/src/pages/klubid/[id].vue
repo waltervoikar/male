@@ -1,17 +1,12 @@
 <template>
   <v-container>
+    <v-row v-if="club">
+      <v-col>
+        <h1 class="mb-2"><a href="/klubid">Klubid</a> / {{ club.name }}</h1>
+      </v-col>
+    </v-row>
     <div v-if="club">
-      <h1 class="club-title">{{ club.name }}</h1>
       <v-row dense>
-        <v-col cols="12" md="6" lg="4">
-          <v-card outlined>
-            <v-card-title>{{ club.location }}</v-card-title>
-            <v-card-text>
-              ASUKOHT
-            </v-card-text>
-          </v-card>
-        </v-col>
-
         <v-col cols="12" md="6" lg="4">
           <v-card outlined>
             <v-card-title>{{ club.membersCount }}</v-card-title>
@@ -31,13 +26,23 @@
         </v-col>
       </v-row>
 
-      <v-row>
+      <v-row cols="12" md="8">
         <v-col>
-          <v-btn color="primary" @click="openModifyClubDialog">Muuda klubi</v-btn>
+          <v-divider :thickness="3"></v-divider>
         </v-col>
       </v-row>
 
-      <v-row cols="12">
+      <v-row>
+        <v-col cols="12" md="6" lg="4">
+          <ModifyClubForm
+            :is-update="true"
+            :club-id="clubId"
+            @club-updated="fetchClubData"
+          />
+        </v-col>
+      </v-row>
+
+      <v-row cols="12" md="8">
         <v-col>
           <v-divider :thickness="3"></v-divider>
         </v-col>
@@ -58,13 +63,6 @@
         Tagasi klubide lehele
       </v-btn>
     </div>
-    <AddClubDialog v-if="showModifyClubDialog"
-                   v-model:show-dialog="showModifyClubDialog"
-                   :is-update="true"
-                   :club-id="clubId"
-                   @club-updated="fetchClubData"
-                   @update:showDialog="updateShowModifyDialog"
-    />
   </v-container>
 </template>
 
@@ -72,10 +70,12 @@
 import {fetchClubById} from "@/wrapper/clubsApiWrapper.js";
 import PlayersSearchTable from "@/components/clubs/PlayersSearchTable.vue";
 import AddClubDialog from "@/components/clubs/AddClubDialog.vue";
+import ModifyClubForm from "@/components/clubs/ModifyClubForm.vue";
 
 export default {
   name: 'ClubDetailsPage',
   components: {
+    ModifyClubForm,
     AddClubDialog,
     PlayersSearchTable
   },

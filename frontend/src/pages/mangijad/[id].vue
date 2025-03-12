@@ -2,7 +2,7 @@
   <v-container>
     <v-row v-if="player">
       <v-col>
-        <h1 class="mb-2">Mängijad / {{ player.name }}</h1>
+        <h1 class="mb-2"><a href="/mangijad">Mängijad</a> / {{ player.name }}</h1>
       </v-col>
     </v-row>
     <v-row v-if="player">
@@ -25,14 +25,6 @@
       Tagasi mängijate lehele
     </v-btn>
   </v-container>
-<!--  <AddPlayerDialog v-if="showModifyPlayerDialog"-->
-<!--                   :showDialog="showModifyPlayerDialog"-->
-<!--                   :is-update="true"-->
-<!--                   :player-id="player.id"-->
-<!--                   @update:showDialog="updateShowModifyPlayerDialog"-->
-<!--                   @player-updated="updatePlayer"-->
-<!--  />-->
-
 </template>
 
 <script>

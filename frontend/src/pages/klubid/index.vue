@@ -1,12 +1,10 @@
 <template>
-  <v-container fluid class="mt-4">
+  <v-container>
     <v-row>
       <v-col>
         <h1>Klubid</h1>
       </v-col>
     </v-row>
-  </v-container>
-  <v-container fluid class="mt-4">
     <v-row class="mb-4">
       <v-col cols="12" sm="3">
         <v-text-field
@@ -37,7 +35,6 @@
         <v-btn color="primary" @click="openAddClubDialog">Lisa uus klubi</v-btn>
       </v-col>
     </v-row>
-
 
     <v-row>
       <v-col
@@ -82,7 +79,7 @@ import {fetchAllClubs} from "@/wrapper/clubsApiWrapper.js";
 import AddClubDialog from "@/components/clubs/AddClubDialog.vue";
 
 export default {
-  components: { AddClubDialog },
+  components: {AddClubDialog},
   name: "ClubsPage",
   data() {
     return {
