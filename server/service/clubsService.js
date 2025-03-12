@@ -1,5 +1,5 @@
 const {pool} = require("../database")
-const {SELECT_ALL_CLUBS, SELECT_CLUB_BY_ID, SELECT_TOP_CLUBS, INSERT_CLUB, getAddOrUpdateClubQuery} = require("./queries");
+const {SELECT_ALL_CLUBS, SELECT_CLUB_BY_ID, SELECT_TOP_CLUBS, INSERT_CLUB, getAddOrUpdateClubQuery, DELETE_CLUB} = require("./queries");
 
 const getAllClubs = (req, res) => {
     console.log("IN - Get all clubs request")
@@ -78,4 +78,22 @@ const addClub = (req, res) => {
     })
 }
 
-module.exports = { getAllClubs, getClubById, addClub, getTopClubs }
+const deleteClub = (req, res) => {
+    const clubId = parseInt(req.params.clubId)
+    console.log(`IN - Delete club(id=${clubId}) request`)
+
+    pool.query(DELETE_CLUB, [clubId], (err, results) => {
+        if (err) {
+            console.error(err)
+            return res.status(500).send({
+                message: `Error while deleting club(id=${clubId})`,
+                error: err
+            })
+        }
+
+        console.log(`OUT - Delete club(id=${clubId}) result: ${JSON.stringify(results.rows)}`)
+        res.status(200).send(results.rows)
+    })
+}
+
+module.exports = { getAllClubs, getClubById, addClub, getTopClubs, deleteClub }

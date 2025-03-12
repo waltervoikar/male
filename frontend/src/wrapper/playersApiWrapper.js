@@ -54,6 +54,14 @@ export async function addPlayer(player) {
   }
 }
 
+export async function removePlayer(playerId) {
+  try {
+    await apiClient.delete(`/players/${playerId}`);
+  } catch (error) {
+    console.error('Error deleting player', error);
+  }
+}
+
 function mapPlayersData(players) {
   return players.map(player => {
     return mapPlayerData(player)

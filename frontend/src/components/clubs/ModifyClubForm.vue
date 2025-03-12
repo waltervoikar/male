@@ -27,7 +27,10 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn variant="tonal" base-color="red" @click="nukeClub">Kustuta klubi</v-btn>
+      <DeleteButtonWithAlert
+        button-text="Kustuta klubi"
+        @nuke-confirmed="nukeClub"
+      />
       <v-btn
         variant="elevated"
         color="primary"
@@ -42,10 +45,12 @@
 
 <script>
 import {fetchAllLocations} from "@/wrapper/locationsApiWrapper.js";
-import {addClub, fetchClubById} from "@/wrapper/clubsApiWrapper.js";
+import {addClub, fetchClubById, removeClub} from "@/wrapper/clubsApiWrapper.js";
+import DeleteButtonWithAlert from "@/components/DeleteButtonWithAlert.vue";
 
 export default {
   name: "ModifyClubForm",
+  components: {DeleteButtonWithAlert},
   props: {
     isUpdate: {
       type: Boolean,
@@ -90,7 +95,8 @@ export default {
     },
 
     async nukeClub() {
-
+      await removeClub(this.clubId)
+      this.$router.push("/klubid")
     },
 
     async submitNewClub() {

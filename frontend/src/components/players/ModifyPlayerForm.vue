@@ -60,7 +60,10 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn variant="tonal" base-color="red" @click="nukePlayer">Kustuta mängija</v-btn>
+      <DeleteButtonWithAlert
+        button-text="Kustuta mängija"
+        @nuke-confirmed="nukePlayer"
+      />
       <v-btn
         variant="elevated"
         color="primary"
@@ -75,10 +78,12 @@
 
 <script>
 import {fetchAllClubs} from "@/wrapper/clubsApiWrapper.js";
-import {addPlayer, fetchPlayerById} from "@/wrapper/playersApiWrapper.js";
+import {addPlayer, fetchPlayerById, removePlayer} from "@/wrapper/playersApiWrapper.js";
+import DeleteButtonWithAlert from "@/components/DeleteButtonWithAlert.vue";
 
 export default {
   name: "ModifyPlayerForm",
+  components: {DeleteButtonWithAlert},
   props: {
     isUpdate: {
       type: Boolean,
@@ -131,7 +136,8 @@ export default {
     },
 
     async nukePlayer() {
-
+      await removePlayer(this.playerId)
+      this.$router.push("/mangijad")
     },
 
     async submitNewPlayer() {

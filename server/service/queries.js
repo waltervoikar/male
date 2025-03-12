@@ -193,6 +193,11 @@ function getAddOrUpdatePlayerQuery(isUpdate) {
     }
 }
 
+const DELETE_PLAYER = `
+    DELETE FROM isikud i
+    WHERE i.id = $1
+`
+
 const SELECT_ALL_TOURNAMENTS = `
   SELECT t.id, t.nimi, t.alguskuupaev, t.loppkuupaev, a.nimi AS toimumiskoht FROM turniirid t
   LEFT JOIN asulad a ON t.asula = a.id
@@ -279,6 +284,11 @@ function getAddOrUpdateClubQuery(isUpdate) {
     }
 }
 
+const DELETE_CLUB = `
+    DELETE FROM klubid k
+    WHERE k.id = $1
+`
+
 module.exports = {
     SELECT_MATCH_BY_ID,
     getAddOrUpdateMatchQuery,
@@ -290,6 +300,7 @@ module.exports = {
     SELECT_PLAYER_STATISTICS,
     SELECT_TOP_PLAYERS,
     getAddOrUpdatePlayerQuery,
+    DELETE_PLAYER,
     SELECT_ALL_TOURNAMENTS,
     SELECT_ONGOING_TOURNAMENTS,
     SELECT_TOURNAMENT_BY_ID,
@@ -297,5 +308,6 @@ module.exports = {
     SELECT_ALL_CLUBS,
     SELECT_CLUB_BY_ID,
     SELECT_TOP_CLUBS,
-    getAddOrUpdateClubQuery
+    getAddOrUpdateClubQuery,
+    DELETE_CLUB,
 };

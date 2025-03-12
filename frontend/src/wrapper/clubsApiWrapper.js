@@ -35,6 +35,14 @@ export async function fetchTopClubs(limit) {
   }
 }
 
+export async function removeClub(clubId) {
+  try {
+    await apiClient.delete(`/clubs/${clubId}`);
+  } catch (error) {
+    console.error('Error deleting club', error);
+  }
+}
+
 function mapClubsData(rawClubData) {
   return rawClubData.map(club => {
     return mapClubData(club)

@@ -10,6 +10,7 @@
       </v-col>
     </v-row>
 
+
     <v-row class="mb-4">
       <v-col cols="12">
         <h1>Hetkel käimasolevad partiid:</h1>
@@ -24,6 +25,7 @@
             </v-card>
           </v-col>
         </v-row>
+
         <v-row v-else class="mb-4">
           <v-col cols="12">
             Hetkel ei ole ühtegi partiid käimas
@@ -31,6 +33,8 @@
         </v-row>
       </v-col>
     </v-row>
+
+
     <v-row class="mb-4">
       <v-col cols="12" md="6">
         <h2>TOP mängijad</h2>
@@ -52,6 +56,7 @@
           </v-col>
         </v-row>
       </v-col>
+
       <v-col cols="12" md="6">
         <h2>TOP Klubid</h2>
         <v-row>

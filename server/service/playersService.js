@@ -1,6 +1,6 @@
 const {pool} = require("../database")
 const {SELECT_ALL_PLAYERS, SELECT_PLAYER_BY_ID, SELECT_ALL_PLAYERS_IN_CLUB, SELECT_PLAYER_STATISTICS,
-    SELECT_TOP_PLAYERS, INSERT_PLAYER, getAddOrUpdatePlayerQuery
+    SELECT_TOP_PLAYERS, INSERT_PLAYER, getAddOrUpdatePlayerQuery, DELETE_PLAYER
 } = require("./queries");
 
 const getAllPlayers = (req, res) => {
@@ -115,4 +115,30 @@ const addPlayer = (req, res) => {
     });
 }
 
-module.exports = { getAllPlayers, getPlayerById, getPlayersByClubId, getPlayerStatistics, addPlayer, getTopPlayers }
+const deletePlayer = (req, res) => {
+    const playerId = parseInt(req.params.playerId)
+    console.log(`IN - Delete player(id=${playerId}) request`)
+
+    pool.query(DELETE_PLAYER, [playerId], (err, results) => {
+        if (err) {
+            console.error(err)
+            return res.status(500).send({
+                message: `Error while deleting player(id=${playerId})`,
+                error: err
+            })
+        }
+
+        console.log(`OUT - Delete player(id=${playerId}) result: success`)
+        res.status(200).send(`Player deleted with ID: ${playerId}`)
+    })
+}
+
+module.exports = {
+    getAllPlayers,
+    getPlayerById,
+    getPlayersByClubId,
+    getPlayerStatistics,
+    addPlayer,
+    getTopPlayers,
+    deletePlayer,
+}
