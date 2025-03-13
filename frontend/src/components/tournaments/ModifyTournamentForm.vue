@@ -1,9 +1,6 @@
 <template>
   <v-dialog v-model="showAddTournamentDialog" max-width="500">
     <v-card>
-      <v-card-title>
-        <span class="headline">Lisa turniir</span>
-      </v-card-title>
       <v-card-text>
         <v-container>
           <v-row>
@@ -71,6 +68,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    tournamentId: {
+      type: String,
+      required: true,
+    }
   },
   data() {
     return {
@@ -106,10 +107,23 @@ export default {
   },
   created() {
     this.loadLocationsCache();
+    if (this.isUpdate && this.tournamentId) {
+      this.loadTournamentData();
+    }
   },
   methods: {
     async loadLocationsCache() {
       this.locationCache = await fetchAllLocations();
+    },
+    async loadTournamentData() {
+      const tournament = await fetchTournamentById(this.tournamentId)
+
+      this.newTournament = {
+        name: tournament.name,
+        location: tournament.location,
+        startDate: new Date(tournament.startDate).toISOString().split('T')[0],
+        endDate: new Date(tournament.endDate).toISOString().split('T')[0],
+      }
     },
     closeDialog() {
       this.showAddTournamentDialog = false;
@@ -129,8 +143,8 @@ export default {
         location: this.newTournament.location,
         startDate: this.newTournament.startDate,
         endDate: this.newTournament.endDate,
-        isUpdate: false,
-        tournamentId: null,
+        isUpdate: true,
+        tournamentId: this.tournamentId,
       };
       await addTournament(tournament);
       this.closeDialog();

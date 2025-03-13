@@ -1,10 +1,11 @@
 <template>
-  <v-row v-if="tournaments.length">
+  <h2 class="mb-2">{{ tournaments.headerText }}</h2>
+  <v-row v-if="tournaments.tournaments.length">
     <v-col
-      v-for="(t, index) in tournaments"
+      v-for="(t, index) in tournaments.tournaments"
       :key="index"
       cols="12"
-      md="12"
+      md="4"
     >
       <v-card
         outlined
@@ -26,7 +27,7 @@
   </v-row>
   <v-row v-else>
     <v-col cols="12" class="mb-4">
-      {{ noTournamentsText }}
+      {{ tournaments.noTournamentsText }}
     </v-col>
   </v-row>
 </template>
@@ -36,24 +37,21 @@ export default {
   name: "TournamentDisplay",
 
   data() {
-    return {}
+    return {
+    }
   },
-
   props: {
     tournaments: {
-      type: Array,
+      type: Object,
       required: true,
     },
-    noTournamentsText: {
-      type: String,
-      required: true,
-    }
   },
 
   methods: {
     goToTournamentDetails(tournamentId) {
       this.$router.push(`/turniirid/${tournamentId}`)
     },
+
   },
 
   created() {

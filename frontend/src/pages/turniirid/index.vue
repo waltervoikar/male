@@ -1,30 +1,45 @@
 <template>
   <v-container fluid class="mt-4">
     <v-row class="mb-4">
-      <v-col>
-        <v-btn color="primary" @click="openAddTournamentDialog">Lisa turniir</v-btn>
+      <v-col cols="12" sm="3">
+        <v-text-field
+          v-model="searchName"
+          label="Otsi nime järgi"
+          clearable
+        />
+      </v-col>
+
+      <v-col cols="12" sm="1">
+        <v-select
+          v-model="resultsPerPage"
+          :items="[10, 20, 50]"
+          label="Tulemusi lehel"
+          :menu-props="{ maxHeight: 200 }"
+        />
+      </v-col>
+
+      <v-col cols="12" sm="4">
+        <v-select
+          v-model="displayTournaments"
+          :items="['Käimas', 'Tulevased', 'Lõppenud']"
+          label="Näita"
+          multiple
+        />
+      </v-col>
+
+      <v-col cols="12" sm="4" class="d-flex justify-end">
+        <v-btn color="primary" @click="openAddTournamentDialog">Lisa uus turniir</v-btn>
       </v-col>
     </v-row>
-    <h2 class="mb-2">Hetkel toimumas:</h2>
-    <TournamentDisplay
-      :tournaments="onGoingTournaments"
-      no-tournaments-text="Hetkel pole ühtegi turniiri toimumas"
-    />
 
-    <h2 class="mb-2">Tulemas:</h2>
-    <TournamentDisplay
-      :tournaments="upcomingTournaments"
-      no-tournaments-text="Hetkel pole ühtegi turniiri tulemas"
-    />
-
-    <h2 class="mb-2">Lõppenud:</h2>
-    <TournamentDisplay
-      :tournaments="finishedTournaments"
-      no-tournaments-text="Hetkel pole ühtegi turniiri lõppenud"
+    <TournamentDisplay v-for="(tournamentType) in displayTournaments"
+                       :tournaments="getTournamentsForType(tournamentType)"
     />
 
     <AddTournamentDialog
       v-model:showDialog="showAddTournamentDialog"
+      @update:showDialog="updateShowAddTournamentDialog"
+      @tournament-updated="handleTournamentUpdate"
     />
   </v-container>
 </template>
@@ -39,18 +54,29 @@ export default {
   components: {TournamentDisplay, AddTournamentDialog },
   data() {
     return {
-      onGoingTournaments: [],
-      upcomingTournaments: [],
-      finishedTournaments: [],
+      onGoingTournaments: {
+        headerText: "Hetkel toimumas:",
+        noTournamentsText: "Hetkel pole ühtegi turniiri toimumas",
+        tournaments: [],
+      },
+      upcomingTournaments: {
+        headerText: "Tulevased turniirid:",
+        noTournamentsText: "Hetkel pole ühtei turniiri tulemas",
+        tournaments: [],
+      },
+      finishedTournaments: {
+        headerText: "Lõppenud turniirid:",
+        noTournamentsText: "Lõppenud turniirid puuduvad",
+        tournaments: [],
+      },
       showAddTournamentDialog: false,
+      searchName: "",
+      resultsPerPage: 10,
+      displayTournaments: ["Käimas"],
     }
   },
 
   methods: {
-    goToTournamentDetails(tournamentId) {
-      this.$router.push(`/turniirid/${tournamentId}`)
-    },
-
     async fetchTournaments() {
       let allTournaments = await fetchAllTournaments()
       let today = new Date()
@@ -59,17 +85,35 @@ export default {
         let tournamentEndDate = Date.parse(tournament.endDate)
 
         if (tournamentStartDate < today && tournamentEndDate > today) {
-          this.onGoingTournaments.push(tournament)
+          this.onGoingTournaments.tournaments.push(tournament)
         } else if (tournamentStartDate > today) {
-          this.upcomingTournaments.push(tournament)
+          this.upcomingTournaments.tournaments.push(tournament)
         } else {
-          this.finishedTournaments.push(tournament)
+          this.finishedTournaments.tournaments.push(tournament)
         }
       })
     },
 
+    getTournamentsForType(tournamentType) {
+      switch (tournamentType) {
+        case 'Käimas': return this.onGoingTournaments;
+        case 'Tulevased': return this.upcomingTournaments;
+        case 'Lõppenud': return this.finishedTournaments;
+        default: return [];
+      }
+    },
+
     openAddTournamentDialog() {
       this.showAddTournamentDialog = true;
+    },
+
+    updateShowAddTournamentDialog(value) {
+      this.showAddTournamentDialog = value;
+    },
+
+    handleTournamentUpdate() {
+      this.showAddTournamentDialog = false;
+      this.fetchTournaments();
     },
   },
 
