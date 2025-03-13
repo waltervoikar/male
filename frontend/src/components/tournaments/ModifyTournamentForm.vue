@@ -1,73 +1,72 @@
 <template>
-  <v-dialog v-model="showAddTournamentDialog" max-width="500">
-    <v-card>
-      <v-card-text>
-        <v-container>
-          <v-row>
-            <v-col cols="12">
-              <v-text-field
-                v-model="newTournament.name"
-                label="Nimi*"
-              />
-            </v-col>
-            <v-col cols="12">
-              <v-autocomplete
-                v-model="newTournament.location"
-                :items="locationCache"
-                :custom-filter="filterLocations"
-                label="Toimumiskoht*"
-                item-title="name"
-                item-value="name"
-                variant="outlined"
-                hide-no-data
-                clearable
-              />
-            </v-col>
-            <v-col cols="12">
-              <v-text-field
-                v-model="newTournament.startDate"
-                label="Algus*"
-                type="date"
-              />
-            </v-col>
-            <v-col cols="12">
-              <v-text-field
-                v-model="newTournament.endDate"
-                label="Lõpp"
-                type="date"
-                :rules="[isEndTimeValid]"
-              />
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn variant="tonal" @click="closeDialog">Tühista</v-btn>
-        <v-btn
-          variant="elevated"
-          color="primary"
-          @click="submitNewTournament"
-          :disabled="!isFormValid"
-        >
-          Salvesta
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+  <v-card>
+    <v-card-text>
+      <v-container>
+        <v-row>
+          <v-col cols="12" sm="6">
+            <v-text-field
+              v-model="newTournament.name"
+              label="Nimi*"
+            />
+          </v-col>
+          <v-col cols="12" sm="6">
+            <v-autocomplete
+              v-model="newTournament.location"
+              :items="locationCache"
+              :custom-filter="filterLocations"
+              label="Toimumiskoht*"
+              item-title="name"
+              item-value="name"
+              variant="outlined"
+              hide-no-data
+              clearable
+            />
+          </v-col>
+          <v-col cols="12" sm="6">
+            <v-text-field
+              v-model="newTournament.startDate"
+              label="Algus*"
+              type="date"
+            />
+          </v-col>
+          <v-col cols="12" sm="6">
+            <v-text-field
+              v-model="newTournament.endDate"
+              label="Lõpp"
+              type="date"
+              :rules="[isEndTimeValid]"
+            />
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-card-text>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <DeleteButtonWithAlert
+        button-text="Kustuta turniir"
+        @nuke-confirmed="nukeTournament"
+      />
+      <v-btn
+        variant="elevated"
+        color="primary"
+        @click="submitNewTournament"
+        :disabled="!isFormValid"
+      >
+        Salvesta
+      </v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>
-import {addTournament, fetchTournamentById} from "@/wrapper/tournamentsApiWrapper.js";
+import {addTournament, fetchTournamentById, removeTournament} from "@/wrapper/tournamentsApiWrapper.js";
 import {fetchAllLocations} from "@/wrapper/locationsApiWrapper.js";
+import DeleteButtonWithAlert from "@/components/DeleteButtonWithAlert.vue";
 
 export default {
-  name: "AddTournamentDialog",
+  name: "ModifyTournamentForm",
+  components: {DeleteButtonWithAlert},
   props: {
-    showDialog: {
-      type: Boolean,
-      default: false,
-    },
     tournamentId: {
       type: String,
       required: true,
@@ -107,9 +106,7 @@ export default {
   },
   created() {
     this.loadLocationsCache();
-    if (this.isUpdate && this.tournamentId) {
-      this.loadTournamentData();
-    }
+    this.loadTournamentData();
   },
   methods: {
     async loadLocationsCache() {
@@ -125,18 +122,6 @@ export default {
         endDate: new Date(tournament.endDate).toISOString().split('T')[0],
       }
     },
-    closeDialog() {
-      this.showAddTournamentDialog = false;
-      this.resetForm();
-    },
-    resetForm() {
-      this.newTournament = {
-        name: null,
-        location: null,
-        startDate: null,
-        endDate: null,
-      };
-    },
     async submitNewTournament() {
       const tournament = {
         name: this.newTournament.name,
@@ -147,8 +132,11 @@ export default {
         tournamentId: this.tournamentId,
       };
       await addTournament(tournament);
-      this.closeDialog();
       this.$emit("tournament-updated", tournament);
+    },
+    async nukeTournament() {
+      await removeTournament(this.tournamentId)
+      this.$router.push("/turniirid")
     },
     isEndTimeValid(value) {
       if (!value) {

@@ -6,4 +6,28 @@ const apiClient = axios.create({
   headers: {'Application-Type': 'application/json'}
 });
 
+const handleError = (error) => {
+  if (error.response) {
+    return { success: false, message: error.response.data.error || "Midagi läks valesti" };
+  } else if (error.request) {
+    return { success: false, message: "Server ei vasta" };
+  } else {
+    return { success: false, message: "Ootamatu error" };
+  }
+};
+
+const handleResponse = (response) => {
+  return { success: true, data: response }
+};
+
+// apiClient.interceptors.request.use(
+//   response => handleResponse(response),
+//   error => Promise.reject(handleError(error))
+// )
+//
+// apiClient.interceptors.response.use(
+//   response => handleResponse(response),
+//   error => Promise.reject(handleError(error))
+// )
+
 export default apiClient;

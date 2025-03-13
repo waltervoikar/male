@@ -238,6 +238,11 @@ function getAddOrUpdateTournamentQuery(isUpdate) {
     }
 }
 
+const DELETE_TOURNAMENT = `
+    DELETE FROM turniirid t
+    WHERE t.id = $1
+`
+
 const SELECT_ALL_CLUBS = `
     SELECT k.*, COUNT(i.id) as members, ROUND(AVG(i.ranking), 1) as average_rating
     FROM klubid k
@@ -305,6 +310,7 @@ module.exports = {
     SELECT_ONGOING_TOURNAMENTS,
     SELECT_TOURNAMENT_BY_ID,
     getAddOrUpdateTournamentQuery,
+    DELETE_TOURNAMENT,
     SELECT_ALL_CLUBS,
     SELECT_CLUB_BY_ID,
     SELECT_TOP_CLUBS,

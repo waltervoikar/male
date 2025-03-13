@@ -1,5 +1,5 @@
 <template>
-  <h2 class="mb-2">{{ tournaments.headerText }}</h2>
+  <h2 v-if="!frontPage" class="mb-2">{{ tournaments.headerText }}</h2>
   <v-row v-if="tournaments.tournaments.length">
     <v-col
       v-for="(t, index) in tournaments.tournaments"
@@ -45,6 +45,10 @@ export default {
       type: Object,
       required: true,
     },
+    frontPage: {
+      type: Boolean,
+      default: false
+    }
   },
 
   methods: {

@@ -1,41 +1,16 @@
 <template>
-  <v-container fluid>
-    <v-row class="mb-4">
+  <v-container>
+    <v-row v-if="tournament" class="mb-4">
       <v-col>
-        <h1 v-if="tournament" class="mb-2">{{ tournament.name }}</h1>
+        <h1 class="mb-2"><a href="/turniirid">Turniirid</a> / {{ tournament.name }}</h1>
       </v-col>
     </v-row>
-    <v-row dense v-if="tournament">
-      <v-col cols="12" md="6" lg="4">
-        <v-card outlined>
-          <v-card-title>{{ tournament.location }}</v-card-title>
-          <v-card-text>
-            ASUKOHT
-          </v-card-text>
-        </v-card>
-      </v-col>
-
-      <v-col cols="12" md="6" lg="4">
-        <v-card outlined>
-          <v-card-title>{{ tournament.startDate }}</v-card-title>
-          <v-card-text>
-            ALGUS
-          </v-card-text>
-        </v-card>
-      </v-col>
-
-      <v-col cols="12" md="6" lg="4">
-        <v-card outlined>
-          <v-card-title>{{ tournament.endDate }}</v-card-title>
-          <v-card-text>
-            LÕPP
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row>
+    <v-row v-if="tournament">
       <v-col>
-        <v-btn color="primary" @click="openModifyTournamentDialog">Muuda turniiri</v-btn>
+        <ModifyTournamentForm
+          :tournament-id="tournamentId"
+          @tournament-updated="fetchTournament"
+        />
       </v-col>
     </v-row>
     <v-row cols="12">
@@ -45,26 +20,9 @@
     </v-row>
     <v-row>
       <v-col>
-        <v-btn color="primary" @click="openAddMatchDialog">Lisa partii</v-btn>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
         <MatchesSearch :tournamentId="tournamentId" />
       </v-col>
     </v-row>
-    <AddMatchDialog
-      :tournamentId="tournamentId"
-      v-model:showDialog="showAddMatchDialog"
-      @match-updated:success="fetchTournament"
-    />
-    <AddTournamentDialog v-if="showModifyTournamentDialog"
-                         v-model:showDialog="showModifyTournamentDialog"
-                         :is-update="true"
-                         :tournament-id="tournamentId"
-                         @update:showDialog="updateShowModifyTournamentDialog"
-                         @tournament-updated="fetchTournament"
-    />
   </v-container>
 </template>
 
@@ -73,10 +31,11 @@ import MatchesSearch from "@/components/tournaments/MatchesSearch.vue";
 import AddMatchDialog from "@/components/tournaments/AddMatchDialog.vue";
 import { fetchTournamentById } from "@/wrapper/tournamentsApiWrapper.js";
 import AddTournamentDialog from "@/components/tournaments/AddTournamentDialog.vue";
+import ModifyTournamentForm from "@/components/tournaments/ModifyTournamentForm.vue";
 
 export default {
   name: "Tournament",
-  components: {AddTournamentDialog, MatchesSearch, AddMatchDialog },
+  components: {ModifyTournamentForm, AddTournamentDialog, MatchesSearch, AddMatchDialog },
   data() {
     return {
       tournamentId: null,

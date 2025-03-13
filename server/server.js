@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors')
 const {getAllPlayers, getPlayerById, getPlayersByClubId, getPlayerStatistics, addPlayer, getTopPlayers, deletePlayer} = require("./service/playersService");
 const {getAllClubs, getClubById, addClub, getTopClubs, deleteClub} = require("./service/clubsService");
-const {getAllTournaments, getTournamentById, addTournament, getOngoingTournaments} = require("./service/tournamentsService");
+const {getAllTournaments, getTournamentById, addTournament, getOngoingTournaments, deleteTournament} = require("./service/tournamentsService");
 const {getMatchByTournamentId, addMatchToTournament, getOngoingMatches, getMatchById} = require("./service/matchesService");
 const {getAllLocations} = require("./service/locationsService");
 
@@ -35,6 +35,7 @@ app.get("/api/tournaments", getAllTournaments)
 app.get("/api/tournaments/ongoing", getOngoingTournaments)
 app.get("/api/tournaments/:id", getTournamentById)
 app.post("/api/tournaments", addTournament)
+app.delete("/api/tournaments/:tournamentId", deleteTournament)
 
 app.get("/api/matches/ongoing", getOngoingMatches)
 app.get("/api/matches/:id", getMatchById)

@@ -5,11 +5,10 @@
         <h1>Hetkel toimumas:</h1>
         <TournamentDisplay
           :tournaments="ongoingTournaments"
-          no-tournaments-text="Hetkel pole ühtegi turniiri toimumas"
+          :front-page="true"
         />
       </v-col>
     </v-row>
-
 
     <v-row class="mb-4">
       <v-col cols="12">
@@ -18,7 +17,7 @@
           <v-col cols="12" md="6" lg="4" v-for="match in ongoingMatches" :key="match.id">
             <v-card class="mb-2">
               <v-card-title class="tournament-title">{{ match.tournament }}</v-card-title>
-              <v-card-text class="player-names d-flex align-end">
+              <v-card-text class="player-names d-flex">
                 <img :src="whitePawn" alt="Black Pawn" class="pawn-icon mr-2" />{{ match.black.fullName }} -
                 {{ match.white.fullName }}<img :src="blackPawn" alt="White Pawn" class="pawn-icon ml-2" />
               </v-card-text>
@@ -95,7 +94,11 @@ export default {
   components: {TournamentDisplay},
   data() {
     return {
-      ongoingTournaments: [],
+      ongoingTournaments: {
+        headerText: "Hetkel toimumas:",
+        noTournamentsText: "Hetkel pole ühtegi turniiri toimumas",
+        tournaments: [],
+      },
       ongoingMatches: [],
       topPlayers: [],
       topClubs: [],
@@ -125,7 +128,7 @@ export default {
     },
 
     async loadOngoingTournaments() {
-      this.ongoingTournaments = await fetchOngoingTournaments()
+      this.ongoingTournaments.tournaments = await fetchOngoingTournaments()
     },
 
     async loadOngoingMatches() {

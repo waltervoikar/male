@@ -71,6 +71,7 @@
     <AddPlayerDialog
       :showDialog="showAddPlayerDialog"
       @player-added="fetchAllPlayersData"
+      @update:showDialog="handleShowAddDialog"
     />
   </v-container>
 </template>
@@ -111,6 +112,10 @@ export default {
 
     openAddPlayerDialog() {
       this.showAddPlayerDialog = true;
+    },
+
+    handleShowAddDialog(value) {
+      this.showAddPlayerDialog = value
     },
   },
 

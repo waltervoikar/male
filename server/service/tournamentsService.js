@@ -1,6 +1,6 @@
 const { pool } = require("../database")
 const {SELECT_ALL_TOURNAMENTS, SELECT_ONGOING_TOURNAMENTS, SELECT_TOURNAMENT_BY_ID, INSERT_TOURNAMENT,
-  getAddOrUpdateTournamentQuery
+  getAddOrUpdateTournamentQuery, DELETE_TOURNAMENT
 } = require("./queries");
 
 const getAllTournaments = (req, res) => {
@@ -62,7 +62,7 @@ const addTournament = (req, res) => {
   if (update) {
     values.push(tournamentId)
   }
-  pool.query(query, values, (err, results) => {
+  pool.query(query, values, (err) => {
     if (err) {
       console.error(err)
       return res.status(500).send({
@@ -70,9 +70,26 @@ const addTournament = (req, res) => {
         error: err
       })
     }
-    console.log(`OUT - Add tournament result: ${JSON.stringify(results.rows[0])}`)
-    res.status(201).send(results.rows[0])
+    console.log(`OUT - Add tournament result: OK`)
+    res.status(201).send()
   })
 }
 
-module.exports = { getAllTournaments, getTournamentById, addTournament, getOngoingTournaments }
+const deleteTournament = (req, res) => {
+  const id = parseInt(req.params.tournamentId)
+  console.log(`IN - Delete tournament(id=${id}) request`)
+
+  pool.query(DELETE_TOURNAMENT, [id], (err) => {
+    if (err) {
+      console.error(err)
+      return res.status(500).send({
+        message: `Error while deleting tournament(id=${id})`,
+        error: err
+      })
+    }
+    console.log(`OUT - Delete tournament(id=${id}) result: OK`)
+    res.status(200).send()
+  })
+}
+
+module.exports = { getAllTournaments, getTournamentById, addTournament, getOngoingTournaments, deleteTournament }

@@ -36,6 +36,14 @@ export async function addTournament(tournament) {
   }
 }
 
+export async function removeTournament(tournamentId) {
+  try {
+    await apiClient.delete(`/tournaments/${tournamentId}`);
+  } catch (error) {
+    console.error('Error removing tournament', error);
+  }
+}
+
 function mapTournamentsData(tournaments) {
   return tournaments.map(tournament => {
     return mapTournamentData(tournament)

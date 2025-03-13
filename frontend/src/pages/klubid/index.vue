@@ -70,6 +70,8 @@
     </v-row>
     <AddClubDialog
       v-model:showDialog="showAddClubDialog"
+      @update:showDialog="updateShowClubDialog"
+      @club-updated="fetchAllClubsData"
     />
   </v-container>
 </template>
@@ -149,6 +151,10 @@ export default {
 
     openAddClubDialog() {
       this.showAddClubDialog = true;
+    },
+
+    updateShowClubDialog(value) {
+      this.showAddClubDialog = value
     },
   },
 }

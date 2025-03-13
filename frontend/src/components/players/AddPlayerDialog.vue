@@ -2,7 +2,7 @@
   <v-dialog v-model="showAddClubDialog" max-width="500">
     <v-card>
       <v-card-title>
-        <span class="headline">Lisa uus klubi</span>
+        <span class="headline">Lisa uus mängija</span>
       </v-card-title>
       <v-card-text>
         <v-container>

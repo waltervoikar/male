@@ -1,48 +1,64 @@
 <template>
-    <v-data-table
-      :headers="headers"
-      :items="matches"
-      :search="searchName"
-      no-data-text="Partiisid ei leitud"
-      item-key="id"
-      class="elevation-1"
-    >
-      <!-- Search bar integrated into the data table toolbar -->
-      <template v-slot:top>
-        <v-toolbar flat dense color="secondary">
-          <v-toolbar-title>Partiid</v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-text-field
-            v-model="searchName"
-            label="Otsi mängija nime järgi"
-            clearable
-            dense
-            outlined
-            hide-details
-            style="max-width: 300px;"
-          />
-        </v-toolbar>
-      </template>
+  <v-row>
+    <v-col>
+      <v-btn color="primary" @click="openAddMatchDialog">Lisa partii</v-btn>
+    </v-col>
+  </v-row>
+  <v-row>
+    <v-col>
+      <v-data-table
+        :headers="headers"
+        :items="matches"
+        :search="searchName"
+        no-data-text="Partiisid ei leitud"
+        item-key="id"
+        class="elevation-1"
+      >
+        <template v-slot:top>
+          <v-toolbar flat dense color="secondary">
+            <v-toolbar-title>Partiid</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-text-field
+              v-model="searchName"
+              label="Otsi mängija nime järgi"
+              clearable
+              dense
+              outlined
+              hide-details
+              style="max-width: 300px;"
+            />
+          </v-toolbar>
+        </template>
 
-      <template v-slot:item.action="{ item }">
-        <v-row align="center" justify="end">
-          <v-btn
-            color="secondary"
-            @click.stop="openMatchDialog(item)"
-          >
-            Muuda
-          </v-btn>
-        </v-row>
-      </template>
-    </v-data-table>
+        <template v-slot:item.action="{ item }">
+          <v-row align="center" justify="end">
+            <v-btn
+              color="secondary"
+              @click.stop="openUpdateMatchDialog(item)"
+            >
+              Muuda
+            </v-btn>
+          </v-row>
+        </template>
+      </v-data-table>
+    </v-col>
+  </v-row>
 
-    <AddMatchDialog v-if="selectedMatch"
-      :tournamentId="tournamentId"
-      v-model:showDialog="showDialog"
-      :is-update="true"
-      :match-id="selectedMatch.id"
-      @dialog-closed="closeMatchDialog"
-    />
+  <AddMatchDialog
+    v-model:showDialog="showAddDialog"
+    :tournamentId="tournamentId"
+    @match-updated="fetchAllMatchesData"
+    @update:showDialog="handleShowAddDialog"
+  />
+
+  <AddMatchDialog v-if="selectedMatch"
+                  :tournamentId="tournamentId"
+                  v-model:showDialog="showUpdateDialog"
+                  :is-update="true"
+                  :match-id="selectedMatch.id"
+                  @match-updated="fetchAllMatchesData"
+                  @update:showDialog="handleShowUpdateDialog"
+  />
 </template>
 
 <script>
@@ -63,8 +79,9 @@ export default {
       ],
       matches: [],
       searchName: '',
-      showDialog: false,
       selectedMatch: null,
+      showUpdateDialog: false,
+      showAddDialog: false,
     }
   },
 
@@ -88,14 +105,24 @@ export default {
       this.matches = await fetchMatchesByTournamentId(this.tournamentId)
     },
 
-    openMatchDialog(match) {
-      this.selectedMatch = match
-      this.showDialog = true
+    openAddMatchDialog() {
+      this.showAddDialog = true
     },
 
-    closeMatchDialog() {
-      this.showDialog = false
-      this.selectedMatch = null
+    openUpdateMatchDialog(match) {
+      this.selectedMatch = match
+      this.showUpdateDialog = true
+    },
+
+    handleShowUpdateDialog(value) {
+      if (value === false) {
+        this.selectedMatch = null;
+      }
+      this.showUpdateDialog = value;
+    },
+
+    handleShowAddDialog(value) {
+      this.showAddDialog = value
     },
 
     nukeMatch() {

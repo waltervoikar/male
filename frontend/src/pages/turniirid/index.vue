@@ -1,5 +1,10 @@
 <template>
-  <v-container fluid class="mt-4">
+  <v-container>
+    <v-row>
+      <v-col>
+        <h1>Turniirid</h1>
+      </v-col>
+    </v-row>
     <v-row class="mb-4">
       <v-col cols="12" sm="3">
         <v-text-field
@@ -80,6 +85,9 @@ export default {
     async fetchTournaments() {
       let allTournaments = await fetchAllTournaments()
       let today = new Date()
+      this.onGoingTournaments.tournaments = []
+      this.upcomingTournaments.tournaments = []
+      this.finishedTournaments.tournaments = []
       allTournaments.map(tournament => {
         let tournamentStartDate = Date.parse(tournament.startDate)
         let tournamentEndDate = Date.parse(tournament.endDate)
