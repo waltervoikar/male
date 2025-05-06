@@ -17,7 +17,7 @@ Lahendus võiks näha välja midagi sellist, nagu on esilehel.
 
 ![img_2.png](img_2.png)
 
-Kui ülesanne on lahendatud, lükka oma muudatused githubi üles ja esita oma repositooriumi link.
+Kui ülesanne on lahendatud, lükka oma muudatused githubi üles ja esita oma repositooriumi link **Moodle keskkonda**.
 
 ```bash
 git add .
