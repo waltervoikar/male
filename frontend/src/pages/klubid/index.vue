@@ -104,10 +104,10 @@ export default {
           filtered.sort((a, b) => a.name.localeCompare(b.name))
           break
         case "Reiting":
-          filtered.sort((a, b) => b.rating - a.rating)
+          filtered.sort((a, b) => b.averageRating - a.averageRating)
           break
         case "Liikmete arv":
-          filtered.sort((a, b) => b.members - a.members)
+          filtered.sort((a, b) => b.membersCount - a.membersCount)
           break
       }
 
