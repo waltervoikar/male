@@ -11,6 +11,7 @@
           v-model="searchName"
           label="Otsi nime järgi"
           clearable
+          @click:clear="clearSearch"
         />
       </v-col>
 
@@ -104,9 +105,9 @@ export default {
 
     getTournamentsForType(tournamentType) {
       switch (tournamentType) {
-        case 'Käimas': return this.onGoingTournaments;
-        case 'Tulevased': return this.upcomingTournaments;
-        case 'Lõppenud': return this.finishedTournaments;
+        case 'Käimas': return this.ongoingTournamentsFiltered;
+        case 'Tulevased': return this.upcomingTournamentsFiltered;
+        case 'Lõppenud': return this.finishedTournamentsFiltered;
         default: return [];
       }
     },
@@ -122,6 +123,45 @@ export default {
     handleTournamentUpdate() {
       this.showAddTournamentDialog = false;
       this.fetchTournaments();
+    },
+
+    clearSearch() {
+      this.searchName = "";
+    },
+  },
+
+  computed: {
+    ongoingTournamentsFiltered() {
+      let filtered = this.onGoingTournaments.tournaments.filter((tournament) =>
+        tournament.name.toLowerCase().includes(this.searchName.toLowerCase())
+      )
+      return {
+        headerText: "Hetkel toimumas:",
+        noTournamentsText: "Hetkel pole ühtegi turniiri toimumas",
+        tournaments: filtered,
+      }
+    },
+
+    upcomingTournamentsFiltered() {
+      let filtered = this.upcomingTournaments.tournaments.filter((tournament) =>
+        tournament.name.toLowerCase().includes(this.searchName.toLowerCase())
+      )
+      return {
+        headerText: "Tulevased turniirid:",
+        noTournamentsText: "Hetkel pole ühtei turniiri tulemas",
+        tournaments: filtered,
+      }
+    },
+
+    finishedTournamentsFiltered() {
+      let filtered = this.finishedTournaments.tournaments.filter((tournament) =>
+        tournament.name.toLowerCase().includes(this.searchName.toLowerCase())
+      )
+      return {
+        headerText: "Lõppenud turniirid:",
+        noTournamentsText: "Lõppenud turniirid puuduvad",
+        tournaments: filtered,
+      }
     },
   },
 

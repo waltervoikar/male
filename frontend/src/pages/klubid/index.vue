@@ -11,6 +11,7 @@
           v-model="searchName"
           label="Otsi nime järgi"
           clearable
+          @click:clear="clearSearch"
         />
       </v-col>
 
@@ -155,6 +156,10 @@ export default {
 
     updateShowClubDialog(value) {
       this.showAddClubDialog = value
+    },
+
+    clearSearch() {
+      this.searchName = "";
     },
   },
 }

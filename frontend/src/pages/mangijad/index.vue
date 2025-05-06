@@ -11,6 +11,7 @@
           v-model="searchName"
           label="Otsi nime järgi"
           clearable
+          @click:clear="clearSearch"
         />
       </v-col>
 
@@ -116,6 +117,10 @@ export default {
 
     handleShowAddDialog(value) {
       this.showAddPlayerDialog = value
+    },
+
+    clearSearch() {
+      this.searchName = "";
     },
   },
 
