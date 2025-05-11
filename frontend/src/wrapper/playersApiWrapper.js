@@ -46,6 +46,15 @@ export async function fetchTopPlayers(limit) {
   }
 }
 
+export async function fetchKlubiParimad(klubiNimi) {
+  try {
+    const response = await apiClient.get( `/players/klubiparimad/${klubiNimi}`);
+    return mapKlubiParimadMangijad(response.data);
+  } catch (error) {
+    console.error('Viga klubi parimate mängijate andmete pärimisel', error);
+  }
+}
+
 export async function addPlayer(player) {
   try {
     await apiClient.post('/players', player);
@@ -91,6 +100,19 @@ function mapPlayerStatistics(playerStatistics) {
     black_match_count: Number(playerStatistics.black_match_count),
     black_win_count: Number(playerStatistics.black_win_count),
     longest_match: formatTime(playerStatistics.longest_match),
+  }
+}
+
+function mapKlubiParimadMangijad(players) {
+  return players.map(player => {
+    return mapKlubiParimad(player)
+  })
+}
+
+function mapKlubiParimad(klubiParimad) {
+  return {
+    nimi: klubiParimad.isik,
+    punktid: klubiParimad.punktisumma,
   }
 }
 

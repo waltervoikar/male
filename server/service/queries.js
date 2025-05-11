@@ -293,6 +293,9 @@ const DELETE_CLUB = `
     DELETE FROM klubid k
     WHERE k.id = $1
 `
+const KLUBI_PARIMAD = `
+    SELECT isik, punktisumma FROM f_klubiparimad($1)
+`
 
 module.exports = {
     SELECT_MATCH_BY_ID,
@@ -303,6 +306,7 @@ module.exports = {
     SELECT_PLAYER_BY_ID,
     SELECT_ALL_PLAYERS_IN_CLUB,
     SELECT_PLAYER_STATISTICS,
+    KLUBI_PARIMAD,
     SELECT_TOP_PLAYERS,
     getAddOrUpdatePlayerQuery,
     DELETE_PLAYER,

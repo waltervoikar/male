@@ -1,7 +1,8 @@
 const {pool} = require("../database")
 const {SELECT_ALL_PLAYERS, SELECT_PLAYER_BY_ID, SELECT_ALL_PLAYERS_IN_CLUB, SELECT_PLAYER_STATISTICS,
-    SELECT_TOP_PLAYERS, INSERT_PLAYER, getAddOrUpdatePlayerQuery, DELETE_PLAYER
+    SELECT_TOP_PLAYERS, KLUBI_PARIMAD, INSERT_PLAYER, getAddOrUpdatePlayerQuery, DELETE_PLAYER
 } = require("./queries");
+const {parse} = require("dotenv");
 
 const getAllPlayers = (req, res) => {
     console.log("IN - Get all players request")
@@ -85,8 +86,23 @@ const getTopPlayers = (req, res) => {
                 error: err
             })
         }
-
         console.log(`OUT - Get top players result (limit=${limit}): ${JSON.stringify(results.rows)}`)
+        res.status(200).send(results.rows)
+    })
+}
+
+const getKlubiParimad = (req, res) => {
+    const klubiNimi = req.params.klubiNimi
+    console.log(`SISSE - Klubi(klubiNimi=${klubiNimi}) parimate mängijate andmete päring`)
+    pool.query(KLUBI_PARIMAD, [klubiNimi], (err, results) => {
+        if (err) {
+            console.error(err)
+            return res.status(500).send({
+                message: `Klubide parimate mängijate lugemisel tekkis viga`,
+                error: err
+            })
+        }
+        console.log(`VÄLJA - Klubi(klubiNimi=$\{klubiNimi}) parimate mängijate andmete päringu tulemus: ${JSON.stringify(results.rows)}`)
         res.status(200).send(results.rows)
     })
 }
@@ -138,6 +154,7 @@ module.exports = {
     getPlayerById,
     getPlayersByClubId,
     getPlayerStatistics,
+    getKlubiParimad,
     addPlayer,
     getTopPlayers,
     deletePlayer,

@@ -40,6 +40,12 @@
             @club-updated="fetchClubData"
           />
         </v-col>
+        <v-col cols="12" md="6" lg="7">
+          <ModifyClubBestPlayersForm
+            :is-update="true"
+            :club-name="club.name"
+          />
+        </v-col>
       </v-row>
 
       <v-row cols="12" md="8">
@@ -71,13 +77,15 @@ import {fetchClubById} from "@/wrapper/clubsApiWrapper.js";
 import PlayersSearchTable from "@/components/clubs/PlayersSearchTable.vue";
 import AddClubDialog from "@/components/clubs/AddClubDialog.vue";
 import ModifyClubForm from "@/components/clubs/ModifyClubForm.vue";
+import ModifyClubBestPlayersForm from "@/components/clubs/ModifyClubBestPlayersForm.vue";
 
 export default {
   name: 'ClubDetailsPage',
   components: {
     ModifyClubForm,
     AddClubDialog,
-    PlayersSearchTable
+    PlayersSearchTable,
+    ModifyClubBestPlayersForm,
   },
   data() {
     return {
@@ -105,6 +113,7 @@ export default {
       this.showModifyClubDialog = value;
     },
   }
+
 
 }
 </script>
